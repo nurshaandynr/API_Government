@@ -37,7 +37,7 @@ async def read_root():
 
 # Endpoint untuk menambahkan data pajak objek wisata
 @app.post('/pajak')
-async def add_pajakwisata(pajak: Pajak):
+async def add_pajak(pajak: Pajak):
     data_pajak.append(pajak.dict())
     return {"message": "Data Pajak Objek Wisata Berhasil Ditambahkan."}
 
@@ -48,7 +48,7 @@ async def get_pajak():
 
 def get_pajak_index(id_pajak):
     for index, pajak in enumerate(data_pajak):
-        if pajak['id_wisata'] == id_pajak:
+        if pajak['id_pajak'] == id_pajak:
             return index
     return None
 
@@ -56,7 +56,7 @@ def get_pajak_index(id_pajak):
 @app.get("/pajak/{id_pajak}", response_model=Optional[Pajak])
 def get_pajak_by_id(id_pajak: str):
     for pajak in data_pajak:
-        if pajak['id_wisata'] == id_pajak:
+        if pajak['id_pajak'] == id_pajak:
             return Pajak(**pajak)
     return None
 
