@@ -113,6 +113,12 @@ class Penduduk (BaseModel):
 
 # Data Dummy untuk tabel penduduk
 data_penduduk =[
+    {'nik':101, 'nama':'Ale', 'provinsi': 'Jawa Barat', 'kota': 'Bandung', 'kecamatan': 'Dayeuhkolot', 'desa': 'Bojongsoang'},
+    {'nik':102, 'nama':'Leo', 'provinsi': 'Bali', 'kota': 'Gianyar', 'kecamatan': 'Gianyar', 'desa': 'Siangan'},
+    {'nik':103, 'nama':'Lea', 'provinsi': 'Jawa Tengah', 'kota': 'Yogyakarta', 'kecamatan': 'Gedongtengen', 'desa': 'Sosromeduran'},
+    {'nik':104, 'nama':'Satoru', 'provinsi': 'Jawa Timur', 'kota': 'Surabaya', 'kecamatan': 'Tenggilis Mejoyo', 'desa': 'Kendangsari'},
+    {'nik':105, 'nama':'Suguru', 'provinsi': 'DKI Jakarta', 'kota': 'Jakarta Selatan', 'kecamatan': 'Kebayoran Baru', 'desa': 'Senayan'},
+
     {'nik':106, 'nama':'Ammar', 'provinsi': 'Banten', 'kota': 'Tangeran Selatan', 'kecamatan': 'Serpong', 'desa': 'Rawa Buntu'},
     {'nik':107, 'nama':'Alif', 'provinsi': 'Sumatera Barat', 'kota': 'Padang', 'kecamatan': 'Kuranji', 'desa': 'Ampang'},
     {'nik':108, 'nama':'Malvin', 'provinsi': 'Jawa Barat', 'kota': 'Bogor', 'kecamatan': 'Bogor Selatan', 'desa': 'Cikaret'},
