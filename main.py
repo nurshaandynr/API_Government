@@ -1,6 +1,5 @@
 from typing import List, Optional
 from decimal import Decimal
-from typing import Literal
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
@@ -16,7 +15,7 @@ class Pajak(BaseModel):
     id_pajak: str
     id_wisata: str
     nama_objek:  str
-    status_kepemilikan: Literal['Pemerintah', 'Swasta', 'Campuran']
+    status_kepemilikan: str
     jenis_pajak: str
     tarif_pajak: float
     besar_pajak: int
