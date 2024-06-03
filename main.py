@@ -124,6 +124,12 @@ data_penduduk =[
     {'nik':108, 'nama':'Malvin', 'provinsi': 'Jawa Barat', 'kota': 'Bogor', 'kecamatan': 'Bogor Selatan', 'desa': 'Cikaret'},
     {'nik':109, 'nama':'Agung', 'provinsi': 'Jawa Timur', 'kota': 'Jember', 'kecamatan': 'Pakusari', 'desa': 'Kertosari'},
     {'nik':110, 'nama':'Fadlan', 'provinsi': 'Banten', 'kota': 'Serang', 'kecamatan': 'Taktakan', 'desa': 'Kalang Anyar'},
+
+    {'nik':111, 'nama':'Chadkowi', 'provinsi': 'Kota Bandung', 'kota': 'Bandung', 'kecamatan': 'Buah Batu', 'desa': 'Margasari'},
+    {'nik':112, 'nama':'Prabroro', 'provinsi': 'DKI Jakarta', 'kota': 'Jakarta Timur', 'kecamatan': 'Jatinegara', 'desa': 'Cipinang'},
+    {'nik':113, 'nama':'Anisa', 'provinsi': 'DIY', 'kota': 'Sleman', 'kecamatan': 'Sleman', 'desa': 'Triharjo'},
+    {'nik':114, 'nama':'Janggar', 'provinsi': 'Bali', 'kota': 'Badung', 'kecamatan': 'Kuta', 'desa': 'Seminyak'},
+    {'nik':115, 'nama':'Mahfud DM', 'provinsi': 'Jawa Timur', 'kota': 'Surabaya', 'kecamatan': 'Gayungan', 'desa': 'Gayungan'},
    
     {'nik':116, 'nama':'Ali', 'provinsi': 'Banten', 'kota': 'Tangerang Selatan', 'kecamatan': 'Ciputat Timur', 'desa': 'Bintaro Sektor 3A'},
     {'nik':117, 'nama':'Sandra', 'provinsi': 'Jawa Barat', 'kota': 'Bandung', 'kecamatan': 'Sumur Bandung', 'desa': 'Karanganyar'},
@@ -217,8 +223,10 @@ class Bank(BaseModel):
 async def get_asuransi():
     data_asuransi = get_asuransi_from_web()
     return data_asuransi
+
 # untuk mendapatkan hasil dari kelompok lain (bank)
 @app.get('/penduduk', response_model=List[Bank])
 async def get_bank():
     data_bank = get_bank_from_web()
     return data_bank
+
