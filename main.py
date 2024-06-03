@@ -35,13 +35,13 @@ async def read_root():
     return {'example': 'Kamu telah berhasil masuk ke API Government', "Data":"Successful"}
 
 # Endpoint untuk menambahkan data pajak objek wisata
-@app.post('/pajak')
+@app.post("/pajak")
 async def add_pajak(pajak: Pajak):
     data_pajak.append(pajak.dict())
     return {"message": "Data Pajak Objek Wisata Berhasil Ditambahkan."}
 
 #Endpoint untuk mendapatkan data pajak objek wisata
-@app.get('/pajak', response_model=List[Pajak])
+@app.get("/pajak", response_model=List[Pajak])
 async def get_pajak():
     return data_pajak
 
@@ -51,7 +51,7 @@ def get_pajak_index(id_pajak):
             return index
     return None
 
-# Endpoint untuk mengmabil detail data pajak sesuai dengan input id_pajak
+# Endpoint untuk mengambil detail data pajak sesuai dengan input id_pajak
 @app.get("/pajak/{id_pajak}", response_model=Optional[Pajak])
 def get_pajak_by_id(id_pajak: str):
     for pajak in data_pajak:
@@ -61,10 +61,10 @@ def get_pajak_by_id(id_pajak: str):
 
 # Endpoint untuk memperbarui data pajak objek wisata dengan memasukkan id_pajak saja
 @app.put("/pajak/{id_pajak}")
-def update_pajak_by_id(id_pajak: str, new_pajak: Pajak):
+def update_pajak_by_id(id_pajak: str, update_pajak: Pajak):
     index = get_pajak_index(id_pajak)
     if index is not None:
-        data_pajak[index] = new_pajak.dict()
+        data_pajak[index] = update_pajak.dict()
         return {"message": "Data wisata berhasil diperbarui."}
     else:
         raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Ditemukan.")
@@ -80,7 +80,7 @@ def delete_pajak_by_id(id_pajak: str):
         raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Berhasil Dihapus.")
 
 #Fungsi untuk mengambil data objek wisata dari website objek wisata
-async def get_objek_wisata_from_web():
+async def get_data_wisata_from_web():
     url = "https://pajakobjekwisata.onrender.com/wisata" # URL Endpoint API dari Objek Wisata
     response = requests.get(url)
     if response.status.code == 200:
@@ -89,16 +89,31 @@ async def get_objek_wisata_from_web():
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil data Objek Wisata")
     
 # Schema Model untuk data Objek Wisata
-class ObjekWisata(BaseModel):
+class Wisata(BaseModel):
     id_wisata: str
     nama_wisata: str
 
 # Endpoint untuk mendapatkan data objek wisata
-@app.get('/wisata', response_model=List[ObjekWisata])
+@app.get('/wisata', response_model=List[Wisata])
 async def get_objekwisata():
-    data_objek = get_objek_wisata_from_web()
-    return data_objek
+    data_wisata = get_data_wisata_from_web()
+    return data_wisata
 
+async def get_wisata_index(id_wisata):
+    data_wisata = get_data_wisata_from_web()
+    for index, wisata in enumerate(data_wisata):
+        if wisata['id_wisata'] == id_wisata:
+            return index
+    return None
+
+# Endpoint untuk mengambil detail data objek wisata sesuai dengan input id_wisata
+@app.get("/wisata/{id_wisata}", response_model=Optional[Wisata])
+def get_wisata_by_id(id_wisata: str):
+    data_wisata = get_data_wisata_from_web()
+    for wisata in data_wisata:
+        if wisata['id_wisata'] == id_wisata:
+            return Wisata(**wisata)
+    return None
 
 # untuk penduduk
 
@@ -143,7 +158,7 @@ async def post_penduduk(penduduk: Penduduk):
 
 # untuk menampilkan data kita sendiri
 @app.get('/penduduk', response_model=List[Penduduk])
-async def post_penduduk():
+async def get_penduduk():
     return data_penduduk
 
 # untuk get data sendiri (berdasakan index)
@@ -167,20 +182,20 @@ def update_penduduk_by_id(nik: int, update_penduduk: Penduduk):
     index = get_penduduk_index(nik)
     if index is not None:
         data_penduduk[index] = update_penduduk.dict()
-        return {"message": "Data (nama datanya) berhasil diperbarui."}
+        return {"message": "Data Penduduk berhasil diperbarui."}
     else:
-        raise HTTPException(status_code=404, detail="Data (nama datanya) Tidak Ditemukan.")
+        raise HTTPException(status_code=404, detail="Data Penduduk Tidak Ditemukan.")
     
 
 # untuk menghapus data
-@app.delete("/penduduk/{id_data}")
+@app.delete("/penduduk/{nik}")
 def delete_penduduk_by_id(nik: int):
     index = get_penduduk_index(nik)
     if index is not None:
         del data_penduduk[index]
         return {"message": "Data (nama datanya) Berhasil Dihapus."}
     else:
-        raise HTTPException(status_code=404, detail="Data (nama datanya) Tidak Berhasil Dihapus.")
+        raise HTTPException(status_code=404, detail="Data Penduduk Tidak Berhasil Dihapus.")
     
 # untuk get data dari kelompok asuransi menggunakan url web hosting
 async def get_penduduk_from_web():
@@ -189,7 +204,7 @@ async def get_penduduk_from_web():
     if response.status.code == 200:
         return response.json()
     else:
-        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil (nama datanya).")
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
 
 # untuk get data dari kelompok bank menggunakan url web hosting
 async def get_asuransi_from_web():
@@ -198,7 +213,7 @@ async def get_asuransi_from_web():
     if response.status.code == 200:
         return response.json()
     else:
-        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil (nama datanya).")
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
 
 # untuk get data dari kelompok bank menggunakan url web hosting (bank)
 async def get_bank_from_web():
@@ -207,7 +222,7 @@ async def get_bank_from_web():
     if response.status.code == 200:
         return response.json()
     else:
-        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil (nama datanya).")
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
     
 class Asuransi(BaseModel):
     nik: int
