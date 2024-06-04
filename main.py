@@ -9,6 +9,11 @@ app = FastAPI(
     docs_url="/",  # Ubah docs_url menjadi "/"
 )
 
+# Endpoint untuk mengakses path root "/"
+@app.get("/")
+async def read_root():
+    return {'example': 'Kamu telah berhasil masuk ke API Government', "Data":"Successful"}
+
 # chema model untuk data pajak objek wisata
 class Pajak(BaseModel):
     id_pajak: str
@@ -19,18 +24,13 @@ class Pajak(BaseModel):
     tarif_pajak: float
     besar_pajak: int
 
-# Endpoint untuk mengakses path root "/"
-@app.get("/")
-async def read_root():
-    return {'example': 'Kamu telah berhasil masuk ke API Government', "Data":"Successful"}
-
 # Data dummy untuk tabel pajak_objek_wisata
 data_pajak =[
-    {'id_pajak': 'PJ001', 'status_kepemilikan': 'Swasta', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 50000000},
-    {'id_pajak': 'PJ002', 'status_kepemilikan': 'Swasta', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 100000000},
-    {'id_pajak': 'PJ003', 'status_kepemilikan': 'Pemerintah', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0, 'besar_pajak': 0},
-    {'id_pajak': 'PJ004', 'status_kepemilikan': 'Pemerintah', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 75000000},
-    {'id_pajak': 'PJ005', 'status_kepemilikan': 'Campuran', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 65000000}
+    {'id_pajak': 'PJ001', 'id_wisata': '', 'nama_objek': '', 'status_kepemilikan': 'Swasta', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 50000000},
+    {'id_pajak': 'PJ002', 'id_wisata': '', 'nama_objek': '', 'status_kepemilikan': 'Swasta', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 100000000},
+    {'id_pajak': 'PJ003', 'id_wisata': '', 'nama_objek': '', 'status_kepemilikan': 'Pemerintah', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0, 'besar_pajak': 0},
+    {'id_pajak': 'PJ004', 'id_wisata': '', 'nama_objek': '', 'status_kepemilikan': 'Pemerintah', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 75000000},
+    {'id_pajak': 'PJ005', 'id_wisata': '', 'nama_objek': '', 'status_kepemilikan': 'Campuran', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 65000000}
 ]
 
 # Endpoint untuk menambahkan data pajak objek wisata
