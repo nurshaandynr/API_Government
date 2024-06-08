@@ -92,7 +92,7 @@ class Wisata(BaseModel):
 
 # Endpoint untuk mendapatkan data objek wisata
 @app.get('/wisata', response_model=List[Wisata])
-async def get_objekwisata():
+async def get_wisata():
     data_wisata = get_data_wisata_from_web()
     return data_wisata
 
@@ -242,16 +242,27 @@ async def get_bank():
     data_bank = get_bank_from_web()
     return data_bank
 
+# menyatukan data pajak dan wisata ke dalam satu tabel
 async def combine_pajak_wisata():
-    data_pajak = get_pajak()
-    data_wisata = get_wisata()
+    pajak_data = get_pajak()
+    wisata_data = get_wisata()
 
     combined_data = []
-    for pajak in data_pajak:
-        for wisata in data_wisata:
+    for pajak in pajak_data:
+        for wisata in wisata_data:
             combined_obj = {
                 "id_pajak": pajak['id_pajak'],
             "wisata": wisata
             }
             combined_data.append(combined_obj)
-    return combined_data   
+    return combined_data  
+
+class PajakWisata(BaseModel):
+    id_pajak: str
+    id_wisata: str
+    nama_wisata: Wisata
+
+@app.get("/pajakWisata", response_model=List[PajakWisata])
+def get_combined_data():
+    combined_data = combine_pajak_wisata()
+    return combined_data
