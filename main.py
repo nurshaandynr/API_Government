@@ -2,6 +2,7 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
+import httpx
 
 app = FastAPI(
     title="Government",
@@ -76,15 +77,16 @@ def delete_pajak_by_id(id_pajak: str):
     else:
         raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Berhasil Dihapus.")
 
-#Fungsi untuk mengambil data objek wisata dari website objek wisata
+# Fungsi untuk mengambil data objek wisata dari website objek wisata
 async def get_data_wisata_from_web():
-    url = "https://pajakobjekwisata.onrender.com/wisata" # URL Endpoint API dari Objek Wisata
-    response = requests.get(url)
-    if response.status.code == 200:
-        return response.json()
-    else:
-        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil data Objek Wisata")
-    
+    url = "https://pajakobjekwisata.onrender.com/wisata"  # URL Endpoint API dari Objek Wisata
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data Objek Wisata")
+
 # Schema Model untuk data Objek Wisata
 class Wisata(BaseModel):
     id_wisata: str
@@ -93,11 +95,12 @@ class Wisata(BaseModel):
 # Endpoint untuk mendapatkan data objek wisata
 @app.get('/wisata', response_model=List[Wisata])
 async def get_wisata():
-    data_wisata = get_data_wisata_from_web()
+    data_wisata = await get_data_wisata_from_web()
     return data_wisata
 
-async def get_wisata_index(id_wisata):
-    data_wisata = get_data_wisata_from_web()
+# Fungsi untuk mendapatkan indeks objek wisata berdasarkan id_wisata
+async def get_wisata_index(id_wisata: str):
+    data_wisata = await get_data_wisata_from_web()
     for index, wisata in enumerate(data_wisata):
         if wisata['id_wisata'] == id_wisata:
             return index
@@ -378,5 +381,3 @@ class PajakWisata(BaseModel):
 def get_combined_data():
     combined_data = combine_pajak_wisata()
     return combined_data
-
-
