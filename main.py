@@ -294,7 +294,6 @@ async def get_rental():
     return data_rental
 
 # untuk mendapatkan hasil dari kelompok lain (Tour Guide)
-# untuk mendapatkan hasil dari kelompok lain (Tour Guide)
 @app.get('/tourguide', response_model=List[Guide])
 async def get_tourguide():
     data_tourguide = await get_guide_from_web()
@@ -308,11 +307,6 @@ class Setoran(BaseModel):
     tanggal_setoran: str
     denda: float
     besar_pajak_setelah_denda: int
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 58bd141747a3785b514f7ac09b7d39926d71503e
     
 # Data dummy untuk tabel pajak_objek_wisata
 data_setoran = [
