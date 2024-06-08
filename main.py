@@ -10,7 +10,7 @@ app = FastAPI(
     docs_url="/",  # Ubah docs_url menjadi "/"
 )
 
-# Endpoint untuk mengakses path root "/"
+# Endpoint untuk mengakses path root "/"a
 @app.get("/")
 async def read_root():
     return {'example': 'Kamu telah berhasil masuk ke API Government', "Data":"Successful"}
