@@ -310,7 +310,7 @@ async def combine_pajak_wisata():
         for wisata in wisata_data:
             combined_obj = {
                 "id_pajak": pajak['id_pajak'],
-                "id_wisata": wisata
+                "wisata": wisata
             }
             combined_data.append(combined_obj)
     return combined_data  
@@ -320,7 +320,7 @@ class PajakWisata(BaseModel):
     id_wisata: str
     nama_wisata: Wisata
 
-@app.get("/pajakWisata", response_model=List[PajakWisata])
+@app.get("/pajakwisata", response_model=List[PajakWisata])
 def get_combined_data():
     combined_data = combine_pajak_wisata()
     return combined_data
