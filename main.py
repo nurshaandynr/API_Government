@@ -312,9 +312,6 @@ class Setoran(BaseModel):
     denda: float
     besar_pajak_setelah_denda: int
     
-
-
-    
 # Data dummy untuk tabel pajak_objek_wisata
 data_setoran = [
     {'id_setoran': 1, 'id_pajak': 'PJ001', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'Status_setoran': 'tepat waktu', 'denda': 0, 'besar_pajak_setelah_denda': 0},
