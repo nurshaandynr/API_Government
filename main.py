@@ -373,7 +373,6 @@ def get_setoran_by_status(status_setoran: str):
 
 
 
-    
 
 # menyatukan data pajak dan wisata ke dalam satu tabel
 async def combine_pajak_wisata():
