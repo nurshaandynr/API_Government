@@ -223,7 +223,7 @@ async def get_bank_from_web():
 
 # untuk get data dari kelompok hotel menggunakan url web hosting (hotel)
 async def get_hotel_from_web():
-    url = "path url"  #endpoint kelompok bank
+    url = "path url"  #endpoint kelompok hotel
     response = requests.get(url)
     if response.status.code == 200:
         return response.json()
@@ -232,7 +232,7 @@ async def get_hotel_from_web():
     
 # untuk get data dari kelompok bank menggunakan url web hosting (rental mobil)
 async def get_rental_from_web():
-    url = "path url"  #endpoint kelompok bank
+    url = "path url"  #endpoint kelompok rental mobil
     response = requests.get(url)
     if response.status.code == 200:
         return response.json()
