@@ -310,7 +310,7 @@ async def combine_pajak_wisata():
         for wisata in wisata_data:
             combined_obj = {
                 "id_pajak": pajak['id_pajak'],
-            "wisata": wisata
+                "id_wisata": wisata
             }
             combined_data.append(combined_obj)
     return combined_data  
