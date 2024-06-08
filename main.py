@@ -1,4 +1,3 @@
-import datetime
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -241,12 +240,12 @@ async def get_rental_from_web():
     
 # untuk get data dari kelompok tour guide menggunakan url web hosting (Tour Guide)
 async def get_guide_from_web():
-    url = "https://tour-guide-ks4n.onrender.com/#/"  #endpoint kelompok tour guide
+    url = "https://tour-guide-ks4n.onrender.com/tourguide"  #endpoint kelompok tour guide
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
-        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")    
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Tour Guide.") 
 
 class Asuransi(BaseModel):
     nik: int
@@ -267,9 +266,8 @@ class Rental(BaseModel):
     kabupaten: str
 
 class Guide(BaseModel):
-    nik: int
-    nama: str
-    kabupaten: str
+    id_guider: str
+    nama_guider: str
     
 # untuk mendapatkan hasil dari kelompok lain (asuransi)
 @app.get('/penduduk/asuransi', response_model=List[Asuransi])
@@ -296,10 +294,11 @@ async def get_rental():
     return data_rental
 
 # untuk mendapatkan hasil dari kelompok lain (Tour Guide)
-@app.get('/penduduk/guide', response_model=List[Guide])
-async def get_guide():
-    data_guide = get_guide_from_web()
-    return data_guide
+# untuk mendapatkan hasil dari kelompok lain (Tour Guide)
+@app.get('/tourguide', response_model=List[Guide])
+async def get_tourguide():
+    data_tourguide = await get_guide_from_web()
+    return data_tourguide
 
 # chema model untuk data SETORAN PAJAK OBJEK WISATA UNTUK BANK
 class Setoran(BaseModel):
@@ -307,8 +306,13 @@ class Setoran(BaseModel):
     id_pajak: str
     tanggal_jatuh_tempo: str
     tanggal_setoran: str
+<<<<<<< HEAD
     denda: float
     besar_pajak_setelah_denda: int
+=======
+    tarif_pajak: float
+    besar_pajak: int
+>>>>>>> 7ea6fe016db0a0fbe07b903c3b7654d9c60ada9b
     
 # Data dummy untuk tabel pajak_objek_wisata
 data_setoran = [
