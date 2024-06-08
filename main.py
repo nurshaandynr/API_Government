@@ -9,7 +9,7 @@ app = FastAPI(
     docs_url="/",  # Ubah docs_url menjadi "/"
 )
 
-# Endpoint untuk mengakses path root "/"
+# Endpoint untuk mengakses path root "/"a
 @app.get("/")
 async def read_root():
     return {'example': 'Kamu telah berhasil masuk ke API Government', "Data":"Successful"}
@@ -306,8 +306,13 @@ class Setoran(BaseModel):
     id_pajak: str
     tanggal_jatuh_tempo: str
     tanggal_setoran: str
-    tarif_pajak: float
-    besar_pajak: int
+    denda: float
+    besar_pajak_setelah_denda: int
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 58bd141747a3785b514f7ac09b7d39926d71503e
     
 # Data dummy untuk tabel pajak_objek_wisata
 data_setoran = [
@@ -347,10 +352,6 @@ def calculate_fine(setoran, current_date, fine_rate=0.02):
         setoran['denda'] = fine_amount
     else:
         setoran['denda'] = 0
-
-
-
-    
 
 # menyatukan data pajak dan wisata ke dalam satu tabel
 async def combine_pajak_wisata():
