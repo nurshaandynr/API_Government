@@ -259,10 +259,12 @@ class Bank(BaseModel):
 class Hotel(BaseModel):
     nik: int
     nama: str
+    kabupaten: str
 
 class Rental(BaseModel):
     nik: int
     nama: str
+    kabupaten: str
 
 class Guide(BaseModel):
     nik: int
