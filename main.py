@@ -305,10 +305,10 @@ async def get_guide():
 class Setoran(BaseModel):
     id_setoran:int
     id_pajak: str
-    tanggal_jatuh_tempo: datetime
-    tanggal_setoran: datetime
-    tarif_pajak: float
-    besar_pajak: int
+    tanggal_jatuh_tempo: str
+    tanggal_setoran: str
+    denda: float
+    besar_pajak_setelah_denda: int
     
 # Data dummy untuk tabel pajak_objek_wisata
 data_setoran = [
