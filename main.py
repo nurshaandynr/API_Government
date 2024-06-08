@@ -205,9 +205,9 @@ async def get_penduduk_from_web():
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
 
-# untuk get data dari kelompok bank menggunakan url web hosting
+# untuk get data dari kelompok asuransi menggunakan url web hosting
 async def get_asuransi_from_web():
-    url = "path url"  #endpoint kelompok bank
+    url = "path url"  #endpoint kelompok asuransi
     response = requests.get(url)
     if response.status.code == 200:
         return response.json()
@@ -222,12 +222,38 @@ async def get_bank_from_web():
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
+
+# untuk get data dari kelompok hotel menggunakan url web hosting (hotel)
+async def get_hotel_from_web():
+    url = "path url"  #endpoint kelompok bank
+    response = requests.get(url)
+    if response.status.code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
     
+# untuk get data dari kelompok bank menggunakan url web hosting (rental mobil)
+async def get_rental_from_web():
+    url = "path url"  #endpoint kelompok bank
+    response = requests.get(url)
+    if response.status.code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
+
 class Asuransi(BaseModel):
     nik: int
     nama: str
 
 class Bank(BaseModel):
+    nik: int
+    nama: str
+
+class Hotel(BaseModel):
+    nik: int
+    nama: str
+
+class Rental(BaseModel):
     nik: int
     nama: str
 
@@ -243,3 +269,14 @@ async def get_bank():
     data_bank = get_bank_from_web()
     return data_bank
 
+# untuk mendapatkan hasil dari kelompok lain (hotel)
+@app.get('/penduduk', response_model=List[Asuransi])
+async def get_hotel():
+    data_asuransi = get_hotel_from_web()
+    return data_asuransi
+
+# untuk mendapatkan hasil dari kelompok lain (rental mobil)
+@app.get('/penduduk', response_model=List[Asuransi])
+async def get_rental():
+    data_asuransi = get_rental_from_web()
+    return data_asuransi
