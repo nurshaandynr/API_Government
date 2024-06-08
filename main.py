@@ -17,8 +17,6 @@ async def read_root():
 # chema model untuk data pajak objek wisata
 class Pajak(BaseModel):
     id_pajak: str
-    id_wisata: str
-    nama_objek:  str
     status_kepemilikan: str
     jenis_pajak: str
     tarif_pajak: float
@@ -26,11 +24,11 @@ class Pajak(BaseModel):
 
 # Data dummy untuk tabel pajak_objek_wisata
 data_pajak =[
-    {'id_pajak': 'PJ001', 'id_wisata': '', 'nama_objek': '', 'status_kepemilikan': 'Swasta', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 50000000},
-    {'id_pajak': 'PJ002', 'id_wisata': '', 'nama_objek': '', 'status_kepemilikan': 'Swasta', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 100000000},
-    {'id_pajak': 'PJ003', 'id_wisata': '', 'nama_objek': '', 'status_kepemilikan': 'Pemerintah', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0, 'besar_pajak': 0},
-    {'id_pajak': 'PJ004', 'id_wisata': '', 'nama_objek': '', 'status_kepemilikan': 'Pemerintah', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 75000000},
-    {'id_pajak': 'PJ005', 'id_wisata': '', 'nama_objek': '', 'status_kepemilikan': 'Campuran', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 65000000}
+    {'id_pajak': 'PJ001', 'status_kepemilikan': 'Swasta', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 50000000},
+    {'id_pajak': 'PJ002', 'status_kepemilikan': 'Swasta', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 100000000},
+    {'id_pajak': 'PJ003', 'status_kepemilikan': 'Pemerintah', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0, 'besar_pajak': 0},
+    {'id_pajak': 'PJ004', 'status_kepemilikan': 'Pemerintah', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 75000000},
+    {'id_pajak': 'PJ005', 'status_kepemilikan': 'Campuran', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 65000000}
 ]
 
 # Endpoint untuk menambahkan data pajak objek wisata
@@ -221,8 +219,9 @@ async def get_bank_from_web():
     if response.status.code == 200:
         return response.json()
     else:
-        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.") 
     
+
 class Asuransi(BaseModel):
     nik: int
     nama: str
@@ -243,3 +242,16 @@ async def get_bank():
     data_bank = get_bank_from_web()
     return data_bank
 
+async def combine_pajak_wisata():
+    data_pajak = get_pajak()
+    data_wisata = get_wisata()
+
+    combined_data = []
+    for pajak in data_pajak:
+        for wisata in data_wisata:
+            combined_obj = {
+                "id_pajak": pajak['id_pajak'],
+            "wisata": wisata
+            }
+            combined_data.append(combined_obj)
+    return combined_data   
