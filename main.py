@@ -281,7 +281,25 @@ async def get_bank():
     data_bank = get_bank_from_web()
     return data_bank
 
-<<<<<<< HEAD
+# untuk mendapatkan hasil dari kelompok lain (hotel)
+@app.get('/penduduk/hotel', response_model=List[Hotel])
+async def get_hotel():
+    data_hotel = get_hotel_from_web()
+    return data_hotel
+
+# untuk mendapatkan hasil dari kelompok lain (rental mobil)
+@app.get('/penduduk/rental', response_model=List[Rental])
+async def get_rental():
+    data_rental = get_rental_from_web()
+    return data_rental
+
+# untuk mendapatkan hasil dari kelompok lain (Tour Guide)
+@app.get('/penduduk/guide', response_model=List[Guide])
+async def get_guide():
+    data_guide = get_guide_from_web()
+    return data_guide
+
+
 # menyatukan data pajak dan wisata ke dalam satu tabel
 async def combine_pajak_wisata():
     pajak_data = get_pajak()
@@ -306,23 +324,3 @@ class PajakWisata(BaseModel):
 def get_combined_data():
     combined_data = combine_pajak_wisata()
     return combined_data
-=======
-# untuk mendapatkan hasil dari kelompok lain (hotel)
-@app.get('/penduduk/hotel', response_model=List[Hotel])
-async def get_hotel():
-    data_hotel = get_hotel_from_web()
-    return data_hotel
-
-# untuk mendapatkan hasil dari kelompok lain (rental mobil)
-@app.get('/penduduk/rental', response_model=List[Rental])
-async def get_rental():
-    data_rental = get_rental_from_web()
-    return data_rental
-
-# untuk mendapatkan hasil dari kelompok lain (Tour Guide)
-@app.get('/penduduk/guide', response_model=List[Guide])
-async def get_guide():
-    data_guide = get_guide_from_web()
-    return data_guide
-
->>>>>>> 100d4645e81be8ebd28543a800068d02b2719b3b
