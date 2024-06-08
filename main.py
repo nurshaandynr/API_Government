@@ -167,7 +167,7 @@ def get_penduduk_index(nik):
     return None
 
 # untuk get data sendiri (berdasarkan NIK)
-@app.get("/penduduk/{id_data}", response_model=Optional[Penduduk])
+@app.get("/penduduk/{nik}", response_model=Optional[Penduduk])
 def get_penduduk_by_id(nik: int):
     for penduduk in data_penduduk:
         if penduduk['nik'] == nik:
@@ -175,7 +175,7 @@ def get_penduduk_by_id(nik: int):
     return None
 
 # untuk update data sendiri 
-@app.put("/penduduk/{id_data}")
+@app.put("/penduduk/{nik}")
 def update_penduduk_by_id(nik: int, update_penduduk: Penduduk):
     index = get_penduduk_index(nik)
     if index is not None:
@@ -184,7 +184,6 @@ def update_penduduk_by_id(nik: int, update_penduduk: Penduduk):
     else:
         raise HTTPException(status_code=404, detail="Data Penduduk Tidak Ditemukan.")
     
-
 # untuk menghapus data
 @app.delete("/penduduk/{nik}")
 def delete_penduduk_by_id(nik: int):
@@ -240,9 +239,9 @@ async def get_rental_from_web():
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
     
-# untuk get data dari kelompok bank menggunakan url web hosting (Tour Guide)
+# untuk get data dari kelompok tour guide menggunakan url web hosting (Tour Guide)
 async def get_guide_from_web():
-    url = "path url"  #endpoint kelompok bank
+    url = "https://tour-guide-ks4n.onrender.com/#/"  #endpoint kelompok tour guide
     response = requests.get(url)
     if response.status.code == 200:
         return response.json()
@@ -260,10 +259,12 @@ class Bank(BaseModel):
 class Hotel(BaseModel):
     nik: int
     nama: str
+    kabupaten: str
 
 class Rental(BaseModel):
     nik: int
     nama: str
+    kabupaten: str
 
 class Guide(BaseModel):
     nik: int
@@ -362,17 +363,16 @@ async def combine_pajak_wisata():
         for wisata in wisata_data:
             combined_obj = {
                 "id_pajak": pajak['id_pajak'],
-            "wisata": wisata
+                "wisata": wisata
             }
             combined_data.append(combined_obj)
     return combined_data  
 
 class PajakWisata(BaseModel):
     id_pajak: str
-    id_wisata: str
-    nama_wisata: Wisata
+    wisata : Wisata
 
-@app.get("/pajakWisata", response_model=List[PajakWisata])
+@app.get("/pajakwisata", response_model=List[PajakWisata])
 def get_combined_data():
     combined_data = combine_pajak_wisata()
     return combined_data
