@@ -1,7 +1,8 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
+
 
 app = FastAPI(
     title="Government",
@@ -305,16 +306,17 @@ class Setoran(BaseModel):
     id_pajak: str
     tanggal_jatuh_tempo: str
     tanggal_setoran: str
+    status_setoran: str
     denda: float
     besar_pajak_setelah_denda: int
     
 # Data dummy untuk tabel pajak_objek_wisata
 data_setoran = [
-    {'id_setoran': 1, 'id_pajak': 'PJ001', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'Status_setoran': 'tepat waktu', 'denda': 0, 'besar_pajak_setelah_denda': 0},
-    {'id_setoran': 2, 'id_pajak': 'PJ002', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'Status_setoran': 'terlambat', 'denda': 0.02, 'besar_pajak_setelah_denda': 100000000},
-    {'id_setoran': 3, 'id_pajak': 'PJ003', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'Status_setoran': 'tepat waktu', 'denda': 0, 'besar_pajak_setelah_denda': 0},
-    {'id_setoran': 4, 'id_pajak': 'PJ004', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'Status_setoran': 'terlambat', 'denda': 0.02, 'besar_pajak_setelah_denda': 75000000},
-    {'id_setoran': 5, 'id_pajak': 'PJ005', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'Status_setoran': 'tepat waktu', 'denda': 0, 'besar_pajak_setelah_denda': 0}
+    {'id_setoran': 1, 'id_pajak': 'PJ001', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'status_setoran': 'tepat waktu', 'denda': 0, 'besar_pajak_setelah_denda': 0},
+    {'id_setoran': 2, 'id_pajak': 'PJ002', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'status_setoran': 'terlambat', 'denda': 0.02, 'besar_pajak_setelah_denda': 100000000},
+    {'id_setoran': 3, 'id_pajak': 'PJ003', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'status_setoran': 'tepat waktu', 'denda': 0, 'besar_pajak_setelah_denda': 0},
+    {'id_setoran': 4, 'id_pajak': 'PJ004', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'status_setoran': 'terlambat', 'denda': 0.02, 'besar_pajak_setelah_denda': 75000000},
+    {'id_setoran': 5, 'id_pajak': 'PJ005', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'status_setoran': 'tepat waktu', 'denda': 0, 'besar_pajak_setelah_denda': 0}
 ]
 
 # Endpoint untuk menambahkan data pajak objek wisata
@@ -333,6 +335,24 @@ def get_setoran_index(id_setoran):
         if pajak['id_setoran'] == id_setoran:
             return index
     return None
+
+# @app.get("/setoranpajak/{status_setoran}", response_model=Optional[Setoran])
+# def get_setoran_by_status(status_setoran: str):
+#     for pajaksetoran in data_setoran:
+#         if pajaksetoran['status_setoran'] == status_setoran:
+#             return Setoran(**pajaksetoran)
+#     raise HTTPException(status_code=404, detail="Setoran not found")
+class NotFoundResponse(BaseModel):
+    status_setoran: str
+    detail: str
+
+@app.get("/setoranpajak/{status_setoran}", response_model=Union[Setoran, NotFoundResponse])
+def get_setoran_by_status(status_setoran: str):
+    for pajaksetoran in data_setoran:
+        if pajaksetoran['status_setoran'] == status_setoran:
+            return Setoran(**pajaksetoran)
+    return NotFoundResponse(status_setoran=status_setoran, detail=f"Setoran pajak dengan status '{status_setoran}' tidak ditemukan")
+
 
 
 # Function to check for penalties and calculate fine
