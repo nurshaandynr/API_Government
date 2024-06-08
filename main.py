@@ -308,6 +308,11 @@ class Setoran(BaseModel):
     tanggal_setoran: str
     denda: float
     besar_pajak_setelah_denda: int
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 58bd141747a3785b514f7ac09b7d39926d71503e
     
 # Data dummy untuk tabel pajak_objek_wisata
 data_setoran = [
