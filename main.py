@@ -231,6 +231,11 @@ class Bank(BaseModel):
     nik: int
     nama: str
 
+class Tourguide(BaseModel):
+    nik: int
+    nama: str
+    kabupaten: str
+
 # untuk mendapatkan hasil dari kelompok lain (asuransi)
 @app.get('/penduduk', response_model=List[Asuransi])
 async def get_asuransi():
