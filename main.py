@@ -238,9 +238,9 @@ async def get_rental_from_web():
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
     
-# untuk get data dari kelompok bank menggunakan url web hosting (Tour Guide)
+# untuk get data dari kelompok tour guide menggunakan url web hosting (Tour Guide)
 async def get_guide_from_web():
-    url = "path url"  #endpoint kelompok bank
+    url = "https://tour-guide-ks4n.onrender.com/#/"  #endpoint kelompok tour guide
     response = requests.get(url)
     if response.status.code == 200:
         return response.json()
