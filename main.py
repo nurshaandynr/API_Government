@@ -317,8 +317,7 @@ async def combine_pajak_wisata():
 
 class PajakWisata(BaseModel):
     id_pajak: str
-    id_wisata: str
-    nama_wisata: Wisata
+    wisata : Wisata
 
 @app.get("/pajakwisata", response_model=List[PajakWisata])
 def get_combined_data():
