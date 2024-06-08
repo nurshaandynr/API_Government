@@ -339,16 +339,16 @@ def get_setoran_index(id_setoran):
 
 
 # Function to check for penalties and calculate fine
-def calculate_fine(setoran, current_date, fine_rate=0.02):
-    due_date = setoran['tanggal_jatuh_tempo']
-    if due_date < current_date:
-        # Calculate the number of days overdue
-        overdue_days = (current_date - due_date).days
-        # Calculate the fine as a percentage of the 'besar_pajak'
-        fine_amount = setoran['besar_pajak'] * fine_rate * (overdue_days / 30)  # Assuming fine is per month
-        setoran['denda'] = fine_amount
-    else:
-        setoran['denda'] = 0
+# def calculate_fine(setoran, current_date, fine_rate=0.02):
+#     due_date = setoran['tanggal_jatuh_tempo']
+#     if due_date < current_date:
+#         # Calculate the number of days overdue
+#         overdue_days = (current_date - due_date).days
+#         # Calculate the fine as a percentage of the 'besar_pajak'
+#         fine_amount = setoran['besar_pajak'] * fine_rate * (overdue_days / 30)  # Assuming fine is per month
+#         setoran['denda'] = fine_amount
+#     else:
+#         setoran['denda'] = 0
 
 
 
