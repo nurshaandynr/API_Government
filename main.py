@@ -258,10 +258,12 @@ class Bank(BaseModel):
 class Hotel(BaseModel):
     nik: int
     nama: str
+    kabupaten: str
 
 class Rental(BaseModel):
     nik: int
     nama: str
+    kabupaten: str
 
 class Guide(BaseModel):
     nik: int
@@ -309,17 +311,16 @@ async def combine_pajak_wisata():
         for wisata in wisata_data:
             combined_obj = {
                 "id_pajak": pajak['id_pajak'],
-            "wisata": wisata
+                "wisata": wisata
             }
             combined_data.append(combined_obj)
     return combined_data  
 
 class PajakWisata(BaseModel):
     id_pajak: str
-    id_wisata: str
-    nama_wisata: Wisata
+    wisata : Wisata
 
-@app.get("/pajakWisata", response_model=List[PajakWisata])
+@app.get("/pajakwisata", response_model=List[PajakWisata])
 def get_combined_data():
     combined_data = combine_pajak_wisata()
     return combined_data
