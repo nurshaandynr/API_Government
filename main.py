@@ -1,4 +1,3 @@
-import datetime
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -305,8 +304,8 @@ async def get_tourguide():
 class Setoran(BaseModel):
     id_setoran:int
     id_pajak: str
-    tanggal_jatuh_tempo: datetime
-    tanggal_setoran: datetime
+    tanggal_jatuh_tempo: str
+    tanggal_setoran: str
     tarif_pajak: float
     besar_pajak: int
     
