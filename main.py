@@ -247,18 +247,23 @@ class Bank(BaseModel):
     nik: int
     nama: str
 
-<<<<<<< HEAD
 class Hotel(BaseModel):
     nik: int
     nama: str
 
+class Rental(BaseModel):
     nik: int
     nama: str
-=======
+
 class Tourguide(BaseModel):
     nik: int
     nama: str
     kabupaten: str
+    
+# untuk mendapatkan hasil dari kelompok lain (asuransi)
+@app.get('/penduduk', response_model=List[Asuransi])
+async def get_asuransi():
+    data_asuransi = get_bank_from_web()
     return data_asuransi
 
 # untuk mendapatkan hasil dari kelompok lain (bank)
@@ -267,30 +272,14 @@ async def get_bank():
     data_bank = get_bank_from_web()
     return data_bank
 
-<<<<<<< HEAD
 # untuk mendapatkan hasil dari kelompok lain (hotel)
-@app.get('/penduduk', response_model=List[Asuransi])
+@app.get('/penduduk', response_model=List[Hotel])
 async def get_hotel():
-    data_asuransi = get_hotel_from_web()
-    return data_asuransi
+    data_hotel = get_hotel_from_web()
+    return data_hotel
 
 # untuk mendapatkan hasil dari kelompok lain (rental mobil)
-@app.get('/penduduk', response_model=List[Asuransi])
+@app.get('/penduduk', response_model=List[Rental])
 async def get_rental():
-    data_asuransi = get_rental_from_web()
-    return data_asuransi
-=======
-async def combine_pajak_wisata():
-    data_pajak = get_pajak()
-    data_wisata = get_wisata()
-
-    combined_data = []
-    for pajak in data_pajak:
-        for wisata in data_wisata:
-            combined_obj = {
-                "id_pajak": pajak['id_pajak'],
-            "wisata": wisata
-            }
-            combined_data.append(combined_obj)
-    return combined_data   
->>>>>>> dbe0cd2aaecb870eca327e7c1b040714c3e07968
+    data_rental = get_rental_from_web()
+    return data_rental
