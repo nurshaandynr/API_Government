@@ -306,13 +306,8 @@ class Setoran(BaseModel):
     id_pajak: str
     tanggal_jatuh_tempo: str
     tanggal_setoran: str
-<<<<<<< HEAD
     denda: float
     besar_pajak_setelah_denda: int
-=======
-    tarif_pajak: float
-    besar_pajak: int
->>>>>>> 7ea6fe016db0a0fbe07b903c3b7654d9c60ada9b
     
 # Data dummy untuk tabel pajak_objek_wisata
 data_setoran = [
@@ -352,10 +347,6 @@ def calculate_fine(setoran, current_date, fine_rate=0.02):
         setoran['denda'] = fine_amount
     else:
         setoran['denda'] = 0
-
-
-
-    
 
 # menyatukan data pajak dan wisata ke dalam satu tabel
 async def combine_pajak_wisata():
