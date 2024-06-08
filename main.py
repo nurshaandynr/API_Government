@@ -264,7 +264,7 @@ class Rental(BaseModel):
     nik: int
     nama: str
 
-class Tourguide(BaseModel):
+class Guide(BaseModel):
     nik: int
     nama: str
     kabupaten: str
