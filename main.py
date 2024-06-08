@@ -203,9 +203,9 @@ async def get_penduduk_from_web():
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
 
-# untuk get data dari kelompok bank menggunakan url web hosting
+# untuk get data dari kelompok asuransi menggunakan url web hosting
 async def get_asuransi_from_web():
-    url = "path url"  #endpoint kelompok bank
+    url = "path url"  #endpoint kelompok asuransi
     response = requests.get(url)
     if response.status.code == 200:
         return response.json()
@@ -219,8 +219,34 @@ async def get_bank_from_web():
     if response.status.code == 200:
         return response.json()
     else:
-        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.") 
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
+
+# untuk get data dari kelompok hotel menggunakan url web hosting (hotel)
+async def get_hotel_from_web():
+    url = "path url"  #endpoint kelompok hotel
+    response = requests.get(url)
+    if response.status.code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
     
+# untuk get data dari kelompok bank menggunakan url web hosting (rental mobil)
+async def get_rental_from_web():
+    url = "path url"  #endpoint kelompok rental mobil
+    response = requests.get(url)
+    if response.status.code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
+    
+# untuk get data dari kelompok bank menggunakan url web hosting (Tour Guide)
+async def get_guide_from_web():
+    url = "path url"  #endpoint kelompok bank
+    response = requests.get(url)
+    if response.status.code == 200:
+        return response.json()
+    else:
+        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")    
 
 class Asuransi(BaseModel):
     nik: int
@@ -230,18 +256,32 @@ class Bank(BaseModel):
     nik: int
     nama: str
 
+class Hotel(BaseModel):
+    nik: int
+    nama: str
+
+class Rental(BaseModel):
+    nik: int
+    nama: str
+
+class Guide(BaseModel):
+    nik: int
+    nama: str
+    kabupaten: str
+    
 # untuk mendapatkan hasil dari kelompok lain (asuransi)
 @app.get('/penduduk', response_model=List[Asuransi])
 async def get_asuransi():
-    data_asuransi = get_asuransi_from_web()
+    data_asuransi = get_bank_from_web()
     return data_asuransi
 
 # untuk mendapatkan hasil dari kelompok lain (bank)
-@app.get('/penduduk', response_model=List[Bank])
+@app.get('/penduduk/bank', response_model=List[Bank])
 async def get_bank():
     data_bank = get_bank_from_web()
     return data_bank
 
+<<<<<<< HEAD
 # menyatukan data pajak dan wisata ke dalam satu tabel
 async def combine_pajak_wisata():
     pajak_data = get_pajak()
@@ -266,3 +306,23 @@ class PajakWisata(BaseModel):
 def get_combined_data():
     combined_data = combine_pajak_wisata()
     return combined_data
+=======
+# untuk mendapatkan hasil dari kelompok lain (hotel)
+@app.get('/penduduk/hotel', response_model=List[Hotel])
+async def get_hotel():
+    data_hotel = get_hotel_from_web()
+    return data_hotel
+
+# untuk mendapatkan hasil dari kelompok lain (rental mobil)
+@app.get('/penduduk/rental', response_model=List[Rental])
+async def get_rental():
+    data_rental = get_rental_from_web()
+    return data_rental
+
+# untuk mendapatkan hasil dari kelompok lain (Tour Guide)
+@app.get('/penduduk/guide', response_model=List[Guide])
+async def get_guide():
+    data_guide = get_guide_from_web()
+    return data_guide
+
+>>>>>>> 100d4645e81be8ebd28543a800068d02b2719b3b
