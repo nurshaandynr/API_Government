@@ -166,7 +166,7 @@ def get_penduduk_index(nik):
     return None
 
 # untuk get data sendiri (berdasarkan NIK)
-@app.get("/penduduk/{id_data}", response_model=Optional[Penduduk])
+@app.get("/penduduk/{nik}", response_model=Optional[Penduduk])
 def get_penduduk_by_id(nik: int):
     for penduduk in data_penduduk:
         if penduduk['nik'] == nik:
@@ -174,7 +174,7 @@ def get_penduduk_by_id(nik: int):
     return None
 
 # untuk update data sendiri 
-@app.put("/penduduk/{id_data}")
+@app.put("/penduduk/{nik}")
 def update_penduduk_by_id(nik: int, update_penduduk: Penduduk):
     index = get_penduduk_index(nik)
     if index is not None:
@@ -183,7 +183,6 @@ def update_penduduk_by_id(nik: int, update_penduduk: Penduduk):
     else:
         raise HTTPException(status_code=404, detail="Data Penduduk Tidak Ditemukan.")
     
-
 # untuk menghapus data
 @app.delete("/penduduk/{nik}")
 def delete_penduduk_by_id(nik: int):
