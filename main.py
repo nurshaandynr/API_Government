@@ -164,6 +164,29 @@ async def post_penduduk(penduduk: Penduduk):
 async def get_penduduk():
     return data_penduduk
 
+class Pendudukrental (BaseModel):
+    nik: int
+    nama: str
+    kota: str
+
+data_Pendudukrental =[
+    {'nik':101, 'nama':'Ale', 'kota': 'Bandung'},
+    {'nik':102, 'nama':'Leo', 'kota': 'Gianyar'},
+    {'nik':103, 'nama':'Lea',  'kota': 'Yogyakarta'},
+    {'nik':104, 'nama':'Satoru', 'kota': 'Surabaya'},
+    {'nik':105, 'nama':'Suguru','kota': 'Jakarta Selatan',},
+]
+    # untuk post data kita ke kelompok  rental mobil
+@app.post('/pendudukrental', response_model=Pendudukrental)
+async def post_pendudukrental(pendudukrental: Pendudukrental):
+    data_Pendudukrental.append(pendudukrental.dict())
+    return pendudukrental
+
+# untuk menampilkan data kita sendiri kelompok rental mobil
+@app.get('/pendudukrental', response_model=List[Pendudukrental])
+async def get_pendudukrental():
+    return data_Pendudukrental
+
 # untuk get data sendiri (berdasakan index)
 def get_penduduk_index(nik):
     for index, penduduk in enumerate(data_penduduk):
@@ -237,7 +260,7 @@ async def get_hotel_from_web():
     
 # untuk get data dari kelompok bank menggunakan url web hosting (rental mobil)
 async def get_rental_from_web():
-    url = "path url"  #endpoint kelompok rental mobil
+    url = "https://rental-mobil-api.onrender.com/pelanggan"  #endpoint kelompok rental mobil
     response = requests.get(url)
     if response.status.code == 200:
         return response.json()
@@ -267,9 +290,8 @@ class Hotel(BaseModel):
     kabupaten: str
 
 class Rental(BaseModel):
-    nik: int
-    nama: str
-    kabupaten: str
+    nomor_telepon:str
+    email:str
 
 class Guide(BaseModel):
     id_guider: str
@@ -294,10 +316,10 @@ async def get_hotel():
     return data_hotel
 
 # untuk mendapatkan hasil dari kelompok lain (rental mobil)
-@app.get('/penduduk/rental', response_model=List[Rental])
-async def get_rental():
-    data_rental = get_rental_from_web()
-    return data_rental
+@app.get('/pelanggan', response_model=List[Rental])
+async def get_pelanggan():
+    data_pelanggan = await get_rental_from_web()
+    return data_pelanggan
 
 # untuk mendapatkan hasil dari kelompok lain (Tour Guide)
 # untuk mendapatkan hasil dari kelompok lain (Tour Guide)
