@@ -152,10 +152,12 @@ data_penduduk =[
     {'nik':119, 'nama':'Lisa', 'provinsi': 'DI Yogyakarta', 'kota': 'Yogyakarta', 'kecamatan': 'Kota Gede', 'desa': 'Purbayan'},
     {'nik':120, 'nama':'Bagus', 'provinsi': 'DKI Jakarta', 'kota': 'Jakarta Barat', 'kecamatan': 'Taman Sari', 'desa': 'Maphar'},
 ]
-# untuk post data kita ke kelompok lain
-@app.post('/penduduk')
+
+    # untuk post data kita ke kelompok lain
+@app.post('/penduduk', response_model=Penduduk)
 async def post_penduduk(penduduk: Penduduk):
     data_penduduk.append(penduduk.dict())
+    return penduduk
 
 # untuk menampilkan data kita sendiri
 @app.get('/penduduk', response_model=List[Penduduk])
