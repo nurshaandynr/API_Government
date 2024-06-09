@@ -164,6 +164,8 @@ async def post_penduduk(penduduk: Penduduk):
 async def get_penduduk():
     return data_penduduk
 
+# ================================================================================== (RENTAL MOBIL)
+
 class Pendudukrental (BaseModel):
     nik: int
     nama: str
@@ -186,6 +188,31 @@ async def post_pendudukrental(pendudukrental: Pendudukrental):
 @app.get('/pendudukrental', response_model=List[Pendudukrental])
 async def get_pendudukrental():
     return data_Pendudukrental
+
+# ================================================================================== (HOTEL)
+
+class Pendudukhotel (BaseModel):
+    nik: int
+    nama: str
+    kota: str
+
+data_Pendudukhotel =[
+    {'nik':101, 'nama':'Ale', 'kota': 'Bandung'},
+    {'nik':102, 'nama':'Leo', 'kota': 'Gianyar'},
+    {'nik':103, 'nama':'Lea',  'kota': 'Yogyakarta'},
+    {'nik':104, 'nama':'Satoru', 'kota': 'Surabaya'},
+    {'nik':105, 'nama':'Suguru','kota': 'Jakarta Selatan',},
+]
+    # untuk post data kita ke kelompok hotel
+@app.post('/pendudukhotel', response_model=Pendudukhotel)
+async def post_pendudukhotel(pendudukhotel: Pendudukhotel):
+    data_Pendudukhotel.append(pendudukhotel.dict())
+    return pendudukhotel
+
+# untuk menampilkan data kita sendiri kelompok hotel
+@app.get('/pendudukhotel', response_model=List[Pendudukhotel])
+async def get_pendudukhotel():
+    return data_Pendudukhotel
 
 # untuk get data sendiri (berdasakan index)
 def get_penduduk_index(nik):
