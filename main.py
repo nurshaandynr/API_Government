@@ -179,15 +179,29 @@ data_Pendudukrental =[
     {'nik':105, 'nama':'Suguru','kota': 'Jakarta Selatan',},
 ]
     # untuk post data kita ke kelompok  rental mobil
-@app.post('/pendudukrental', response_model=Pendudukrental)
-async def post_pendudukrental(pendudukrental: Pendudukrental):
+
+@app.post("/pendudukrental")
+def tambah_pendudukrental(pendudukrental: Pendudukrental):
     data_Pendudukrental.append(pendudukrental.dict())
-    return pendudukrental
+    return {"message": "Data Penduduk berhasil ditambahkan."}
 
 # untuk menampilkan data kita sendiri kelompok rental mobil
 @app.get('/pendudukrental', response_model=List[Pendudukrental])
 async def get_pendudukrental():
     return data_Pendudukrental
+
+def get_pendudukrental_index(nik: str) -> Optional[int]:
+    for index, pendudukrental in enumerate(data_Pendudukrental):
+        if pendudukrental['nik'] == nik:
+            return index
+    return None
+
+@app.get("/pendudukrental/{nik}", response_model=Pendudukrental)
+def get_pendudukrental_by_nik(nik: int):
+    index = get_pendudukrental_index(nik)
+    if index is not None:
+        return Pendudukrental(**data_Pendudukrental[index])
+    raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
 
 # ================================================================================== (HOTEL)
 
@@ -287,7 +301,7 @@ async def get_hotel_from_web():
     
 # untuk get data dari kelompok bank menggunakan url web hosting (rental mobil)
 async def get_rental_from_web():
-    url = "https://rental-mobil-api.onrender.com/penduduk"  #endpoint kelompok rental mobil
+    url = "https://rental-mobil-api.onrender.com/pelanggan"  #endpoint kelompok rental mobil
     response = requests.get(url)
     if response.status.code == 200:
         return response.json()
