@@ -287,7 +287,7 @@ async def get_hotel_from_web():
     
 # untuk get data dari kelompok bank menggunakan url web hosting (rental mobil)
 async def get_rental_from_web():
-    url = "https://rental-mobil-api.onrender.com/pelanggan"  #endpoint kelompok rental mobil
+    url = "https://rental-mobil-api.onrender.com/penduduk"  #endpoint kelompok rental mobil
     response = requests.get(url)
     if response.status.code == 200:
         return response.json()
