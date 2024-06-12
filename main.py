@@ -268,7 +268,7 @@ def delete_penduduk_by_id(nik: int):
 async def get_penduduk_from_web():
     url = "path url"  #endpoint kelompok asuransi
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
@@ -277,7 +277,7 @@ async def get_penduduk_from_web():
 async def get_asuransi_from_web():
     url = "path url"  #endpoint kelompok asuransi
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
@@ -286,16 +286,16 @@ async def get_asuransi_from_web():
 async def get_bank_from_web():
     url = "path url"  #endpoint kelompok bank
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
 
 # untuk get data dari kelompok hotel menggunakan url web hosting (hotel)
 async def get_hotel_from_web():
-    url = "path url"  #endpoint kelompok hotel
+    url = "https://hotelbaru.onrender.com"  #endpoint kelompok hotel
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
@@ -304,7 +304,7 @@ async def get_hotel_from_web():
 async def get_rental_from_web():
     url = "https://rental-mobil-api.onrender.com/pelanggan"  #endpoint kelompok rental mobil
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
