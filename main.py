@@ -274,14 +274,13 @@ data_Pendudukrental =[
     {'nik':104, 'nama':'Satoru', 'kota': 'Surabaya'},
     {'nik':105, 'nama':'Suguru','kota': 'Jakarta Selatan',},
 ]
-    # untuk post data kita ke kelompok  rental mobil
+
 
 @app.post("/pendudukrental")
 def tambah_pendudukrental(pendudukrental: Pendudukrental):
     data_Pendudukrental.append(pendudukrental.dict())
     return {"message": "Data Penduduk berhasil ditambahkan."}
 
-# untuk menampilkan data kita sendiri kelompok rental mobil
 @app.get('/pendudukrental', response_model=List[Pendudukrental])
 async def get_pendudukrental():
     return data_Pendudukrental
@@ -337,7 +336,7 @@ def tambah_pendudukhotel(pendudukhotel: Pendudukhotel):
     data_Pendudukhotel.append(pendudukhotel.dict())
     return {"message": "Data Penduduk berhasil ditambahkan."}
 
-# untuk menampilkan data kita sendiri kelompok hotel
+
 @app.get('/pendudukhotel', response_model=List[Pendudukhotel])
 async def get_pendudukhotel():
     return data_Pendudukhotel
