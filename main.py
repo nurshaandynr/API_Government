@@ -229,6 +229,91 @@ async def post_pendudukhotel(pendudukhotel: Pendudukhotel):
 async def get_pendudukhotel():
     return data_Pendudukhotel
 
+
+# ================================================================================== (ASURANSI)
+
+class Pendudukasuransi (BaseModel):
+    nik: int
+    nama: str
+    kota: str
+    kecamatan: str
+    desa : str
+
+data_Pendudukasuransi =[
+    {'nik':116, 'nama':'Ali', 'provinsi': 'Banten', 'kota': 'Tangerang Selatan', 'kecamatan': 'Ciputat Timur', 'desa': 'Bintaro Sektor 3A'},
+    {'nik':117, 'nama':'Sandra', 'provinsi': 'Jawa Barat', 'kota': 'Bandung', 'kecamatan': 'Sumur Bandung', 'desa': 'Karanganyar'},
+    {'nik':118, 'nama':'Joseph', 'provinsi': 'Jawa Tengah', 'kota': 'Magelang', 'kecamatan': 'Magelang Utara', 'desa': 'Wates'},
+    {'nik':119, 'nama':'Lisa', 'provinsi': 'DI Yogyakarta', 'kota': 'Yogyakarta', 'kecamatan': 'Kota Gede', 'desa': 'Purbayan'},
+    {'nik':120, 'nama':'Bagus', 'provinsi': 'DKI Jakarta', 'kota': 'Jakarta Barat', 'kecamatan': 'Taman Sari', 'desa': 'Maphar'},
+]
+    # untuk post data kita ke kelompok asuransi
+@app.post('/pendudukasuransi', response_model=Pendudukasuransi)
+async def post_pendudukasuransi(pendudukasuransi: Pendudukasuransi):
+    data_Pendudukasuransi.append(pendudukasuransi.dict())
+    return pendudukasuransi
+
+# untuk menampilkan data kita sendiri kelompok asuransi
+@app.get('/pendudukasuransi', response_model=List[Pendudukasuransi])
+async def get_pendudukasuransi():
+    return data_Pendudukasuransi
+
+def get_pendudukasuransi_index(nik: str) -> Optional[int]:
+    for index, pendudukasuransi in enumerate(data_Pendudukasuransi):
+        if pendudukasuransi['nik'] == nik:
+            return index
+    return None
+
+@app.get("/pendudukasuransi/{nik}", response_model=Pendudukasuransi)
+def get_pendudukasuransi_by_nik(nik: int):
+    index = get_pendudukasuransi_index(nik)
+    if index is not None:
+        return Pendudukasuransi(**data_Pendudukasuransi[index])
+    raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
+
+# =========================================== (BATAS PENDUDUK ASURANSI)
+
+# ================================================================================== (BANK)
+
+class Pendudukbank (BaseModel):
+    nik: int
+    nama: str
+    kota: str
+
+
+data_Pendudukbank =[
+    {'nik':106, 'nama':'Ammar', 'provinsi': 'Banten', 'kota': 'Tangeran Selatan', 'kecamatan': 'Serpong', 'desa': 'Rawa Buntu'},
+    {'nik':107, 'nama':'Alif', 'provinsi': 'Sumatera Barat', 'kota': 'Padang', 'kecamatan': 'Kuranji', 'desa': 'Ampang'},
+    {'nik':108, 'nama':'Malvin', 'provinsi': 'Jawa Barat', 'kota': 'Bogor', 'kecamatan': 'Bogor Selatan', 'desa': 'Cikaret'},
+    {'nik':109, 'nama':'Agung', 'provinsi': 'Jawa Timur', 'kota': 'Jember', 'kecamatan': 'Pakusari', 'desa': 'Kertosari'},
+    {'nik':110, 'nama':'Fadlan', 'provinsi': 'Banten', 'kota': 'Serang', 'kecamatan': 'Taktakan', 'desa': 'Kalang Anyar'},
+
+]
+    # untuk post data kita ke kelompok asuransi
+@app.post('/pendudukbank', response_model=Pendudukbank)
+async def post_pendudukbank(pendudukbank: Pendudukbank):
+    data_Pendudukbank.append(pendudukbank.dict())
+    return pendudukbank
+
+# untuk menampilkan data kita sendiri kelompok hotel
+@app.get('/pendudukbank', response_model=List[Pendudukbank])
+async def get_pendudukbank():
+    return data_Pendudukbank
+
+def get_pendudukbank_index(nik: str) -> Optional[int]:
+    for index, pendudukbank in enumerate(data_Pendudukbank):
+        if pendudukbank['nik'] == nik:
+            return index
+    return None
+
+@app.get("/pendudukbank/{nik}", response_model=Pendudukbank)
+def get_pendudukbank_by_nik(nik: int):
+    index = get_pendudukbank_index(nik)
+    if index is not None:
+        return Pendudukbank(**data_Pendudukbank[index])
+    raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
+
+# =========================================== (BATAS PENDUDUK BANK)
+
 # untuk get data sendiri (berdasakan index)
 def get_penduduk_index(nik):
     for index, penduduk in enumerate(data_penduduk):
@@ -275,7 +360,7 @@ async def get_penduduk_from_web():
 
 # untuk get data dari kelompok asuransi menggunakan url web hosting
 async def get_asuransi_from_web():
-    url = "path url"  #endpoint kelompok asuransi
+    url = "https://eai-fastapi.onrender.com/"  #endpoint kelompok asuransi
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
@@ -284,7 +369,7 @@ async def get_asuransi_from_web():
 
 # untuk get data dari kelompok bank menggunakan url web hosting (bank)
 async def get_bank_from_web():
-    url = "path url"  #endpoint kelompok bank
+    url = "https://jumantaradev.my.id/"  #endpoint kelompok bank
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
