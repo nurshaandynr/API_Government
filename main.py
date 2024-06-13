@@ -400,6 +400,10 @@ async def get_guide_from_web():
 class Asuransi(BaseModel):
     nik: int
     nama: str
+    provinsi: str
+    kota: str
+    kecamatan: str
+    desa : str
 
 class Bank(BaseModel):
     nik: int
