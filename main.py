@@ -3,11 +3,6 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
 import httpx
-<<<<<<< HEAD
-
-=======
-from itertools import zip_longest
->>>>>>> ffbb289900390588747cc6fa6d83ce58cd1f1de4
 
 
 app = FastAPI(
@@ -304,6 +299,24 @@ def get_pendudukrental_by_nik(nik: int):
         return Pendudukrental(**data_Pendudukrental[index])
     raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
 
+@app.put("/pendudukrental/{nik}")
+def update_pendudukrental_by_nik(nik: int, pendudukrental: Pendudukrental):
+    index = get_pendudukrental_index(nik)
+    if index is not None:
+        data_Pendudukrental[index] = pendudukrental.dict()
+        return {"message": "Data Penduduk berhasil diperbarui."}
+    else:
+        raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
+
+@app.delete("/pendudukrental/{nik}")
+def delete_pendudukrental(nik: int):
+    index = get_pendudukrental_index(nik)
+    if index is not None:
+        del data_Pendudukrental[index]
+        return {"message": "Data Penduduk berhasil dihapus."}
+    else:
+        raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
+
 # ================================================================================== (HOTEL)
 
 class Pendudukhotel (BaseModel):
@@ -327,7 +340,7 @@ def tambah_pendudukhotel(pendudukhotel: Pendudukhotel):
 # untuk menampilkan data kita sendiri kelompok hotel
 @app.get('/pendudukhotel', response_model=List[Pendudukhotel])
 async def get_pendudukhotel():
-    return data_Pendudukrental
+    return data_Pendudukhotel
 
 def get_pendudukhotel_index(nik: int) -> Optional[int]:
     for index, pendudukhotel in enumerate(data_Pendudukhotel):
@@ -341,6 +354,24 @@ def get_pendudukhotel_by_nik(nik: int):
     if index is not None:
         return Pendudukhotel(**data_Pendudukhotel[index])
     raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
+
+@app.put("/pendudukhotel/{nik}")
+def update_pendudukhotel_by_nik(nik: int, pendudukhotel: Pendudukhotel):
+    index = get_pendudukhotel_index(nik)
+    if index is not None:
+        data_Pendudukhotel[index] = pendudukhotel.dict()
+        return {"message": "Data Penduduk berhasil diperbarui."}
+    else:
+        raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
+
+@app.delete("/pendudukhotel/{nik}")
+def delete_pendudukhotel(nik: int):
+    index = get_pendudukhotel_index(nik)
+    if index is not None:
+        del data_Pendudukhotel[index]
+        return {"message": "Data Penduduk berhasil dihapus."}
+    else:
+        raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
 
 #====================================================================================== (Selesai)
 
