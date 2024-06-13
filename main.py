@@ -121,6 +121,15 @@ async def get_wisata_index(id_wisata: str):
             return index
     return None
 
+# Endpoint untuk mendapatkan data objek wisata berdasarkan id_wisata
+@app.get('/wisata/{id_wisata}', response_model=ApiResponse)
+async def get_wisata_by_id(id_wisata: str):
+    data_wisata = await get_data_wisata_from_web()
+    for wisata in data_wisata:
+        if wisata['id_wisata'] == id_wisata:
+            return ApiResponse(status=True, message="Data Objek Wisata Berhasil Diambil", data=wisata)
+    return ApiResponse(status=False, message="Data Objek Wisata Tidak Ditemukan", data=None)
+
 # # Endpoint untuk menambahkan data pajak objek wisata
 # @app.post("/pajak")
 # async def add_pajak(pajak: Pajak):
