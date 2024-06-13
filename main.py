@@ -1,13 +1,17 @@
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
 import httpx
+<<<<<<< HEAD
 
+=======
+from itertools import zip_longest
+>>>>>>> ffbb289900390588747cc6fa6d83ce58cd1f1de4
 
 
 app = FastAPI(
-    title="Government",
+    title="Government API Documentation",
     description="API untuk mengelola data pemerintahan",
     docs_url="/",  # Ubah docs_url menjadi "/"
 )
@@ -34,16 +38,29 @@ data_pajak =[
     {'id_pajak': 'PJ005', 'status_kepemilikan': 'Campuran', 'jenis_pajak': 'Pajak Pertahanan Nilai (PPN)', 'tarif_pajak': 0.11, 'besar_pajak': 65000000}
 ]
 
-# Endpoint untuk menambahkan data pajak objek wisata
-@app.post("/pajak")
-async def add_pajak(pajak: Pajak):
-    data_pajak.append(pajak.dict())
-    return {"message": "Data Pajak Objek Wisata Berhasil Ditambahkan."}
+# Schema model untuk respons umum
+class ApiResponse(BaseModel):
+    status: bool
+    message: str
+    data: Optional[Any] = None
 
-#Endpoint untuk mendapatkan data pajak objek wisata
-@app.get("/pajak", response_model=List[Pajak])
+# # Endpoint untuk menambahkan data pajak objek wisata
+# @app.post("/pajak", response_model=ApiResponse)
+# async def add_pajak(pajak: Pajak):
+#     data_pajak.append(pajak.dict())
+#     return ApiResponse(status=True, message="Data Pajak Objek Wisata Berhasil Ditambahkan", data=pajak)
+
+@app.post("/pajak", response_model=ApiResponse)
+async def add_pajak(pajak: Pajak):
+    if any(existing_pajak['id_pajak'] == pajak.id_pajak for existing_pajak in data_pajak):
+        raise HTTPException(status_code=400, detail="ID Pajak sudah ada.")
+    data_pajak.append(pajak.dict())
+    return ApiResponse(status=True, message="Data Pajak Objek Wisata Berhasil Ditambahkan", data=pajak)
+
+# Endpoint untuk mendapatkan data pajak objek wisata
+@app.get("/pajak", response_model=ApiResponse)
 async def get_pajak():
-    return data_pajak
+    return ApiResponse(status=True, message="Data Pajak Objek Wisata Berhasil Diambil", data=data_pajak)
 
 def get_pajak_index(id_pajak):
     for index, pajak in enumerate(data_pajak):
@@ -52,32 +69,32 @@ def get_pajak_index(id_pajak):
     return None
 
 # Endpoint untuk mengambil detail data pajak sesuai dengan input id_pajak
-@app.get("/pajak/{id_pajak}", response_model=Optional[Pajak])
+@app.get("/pajak/{id_pajak}", response_model=ApiResponse)
 def get_pajak_by_id(id_pajak: str):
     for pajak in data_pajak:
         if pajak['id_pajak'] == id_pajak:
-            return Pajak(**pajak)
-    return None
+            return ApiResponse(status=True, message="Data Pajak Objek Wisata Berhasil Diambil", data=pajak)
+    raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Ditemukan")
 
 # Endpoint untuk memperbarui data pajak objek wisata dengan memasukkan id_pajak saja
-@app.put("/pajak/{id_pajak}")
+@app.put("/pajak/{id_pajak}", response_model=ApiResponse)
 def update_pajak_by_id(id_pajak: str, update_pajak: Pajak):
     index = get_pajak_index(id_pajak)
     if index is not None:
         data_pajak[index] = update_pajak.dict()
-        return {"message": "Data wisata berhasil diperbarui."}
+        return ApiResponse(status=True, message="Data Pajak Objek Wisata Berhasil Diperbarui", data=update_pajak)
     else:
-        raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Ditemukan.")
+        raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Ditemukan")
 
 # Endpoint untuk menghapus data pajak objek wisaya by id_pajak
-@app.delete("/pajak/{id_pajak}")
+@app.delete("/pajak/{id_pajak}", response_model=ApiResponse)
 def delete_pajak_by_id(id_pajak: str):
     index = get_pajak_index(id_pajak)
     if index is not None:
         del data_pajak[index]
-        return {"message": "Data Pajak Objek Wisata Berhasil Dihapus."}
+        return ApiResponse(status=True, message="Data Pajak Objek Wisata Berhasil Dihapus")
     else:
-        raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Berhasil Dihapus.")
+        raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Berhasil Dihapus")
 
 # Fungsi untuk mengambil data objek wisata dari website objek wisata
 async def get_data_wisata_from_web():
@@ -95,10 +112,10 @@ class Wisata(BaseModel):
     nama_objek: str
 
 # Endpoint untuk mendapatkan data objek wisata
-@app.get('/wisata', response_model=List[Wisata])
+@app.get('/wisata', response_model=ApiResponse)
 async def get_wisata():
     data_wisata = await get_data_wisata_from_web()
-    return data_wisata
+    return ApiResponse(status=True, message="Data Objek Wisata Berhasil Diambil", data=data_wisata)
 
 # Fungsi untuk mendapatkan indeks objek wisata berdasarkan id_wisata
 async def get_wisata_index(id_wisata: str):
@@ -108,14 +125,97 @@ async def get_wisata_index(id_wisata: str):
             return index
     return None
 
-# Endpoint untuk mengambil detail data objek wisata sesuai dengan input id_wisata
-@app.get("/wisata/{id_wisata}", response_model=Optional[Wisata])
+# Endpoint untuk mendapatkan data objek wisata berdasarkan id_wisata
+@app.get('/wisata/{id_wisata}', response_model=ApiResponse)
 async def get_wisata_by_id(id_wisata: str):
     data_wisata = await get_data_wisata_from_web()
     for wisata in data_wisata:
         if wisata['id_wisata'] == id_wisata:
-            return Wisata(**wisata)
-    return None
+            return ApiResponse(status=True, message="Data Objek Wisata Berhasil Diambil", data=wisata)
+    return ApiResponse(status=False, message="Data Objek Wisata Tidak Ditemukan", data=None)
+
+# # Endpoint untuk menambahkan data pajak objek wisata
+# @app.post("/pajak")
+# async def add_pajak(pajak: Pajak):
+#     data_pajak.append(pajak.dict())
+#     return {"message": "Data Pajak Objek Wisata Berhasil Ditambahkan."}
+
+# #Endpoint untuk mendapatkan data pajak objek wisata
+# @app.get("/pajak", response_model=List[Pajak])
+# async def get_pajak():
+#     return data_pajak
+
+# def get_pajak_index(id_pajak):
+#     for index, pajak in enumerate(data_pajak):
+#         if pajak['id_pajak'] == id_pajak:
+#             return index
+#     return None
+
+# # Endpoint untuk mengambil detail data pajak sesuai dengan input id_pajak
+# @app.get("/pajak/{id_pajak}", response_model=Optional[Pajak])
+# def get_pajak_by_id(id_pajak: str):
+#     for pajak in data_pajak:
+#         if pajak['id_pajak'] == id_pajak:
+#             return Pajak(**pajak)
+#     return None
+
+# # Endpoint untuk memperbarui data pajak objek wisata dengan memasukkan id_pajak saja
+# @app.put("/pajak/{id_pajak}")
+# def update_pajak_by_id(id_pajak: str, update_pajak: Pajak):
+#     index = get_pajak_index(id_pajak)
+#     if index is not None:
+#         data_pajak[index] = update_pajak.dict()
+#         return {"message": "Data wisata berhasil diperbarui."}
+#     else:
+#         raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Ditemukan.")
+
+# # Endpoint untuk menghapus data pajak objek wisaya by id_pajak
+# @app.delete("/pajak/{id_pajak}")
+# def delete_pajak_by_id(id_pajak: str):
+#     index = get_pajak_index(id_pajak)
+#     if index is not None:
+#         del data_pajak[index]
+#         return {"message": "Data Pajak Objek Wisata Berhasil Dihapus."}
+#     else:
+#         raise HTTPException(status_code=404, detail="Data Pajak Objek Wisata Tidak Berhasil Dihapus.")
+
+# # Fungsi untuk mengambil data objek wisata dari website objek wisata
+# async def get_data_wisata_from_web():
+#     url = "https://pajakobjekwisata.onrender.com/wisata"  # URL Endpoint API dari Objek Wisata
+#     async with httpx.AsyncClient() as client:
+#         response = await client.get(url)
+#         if response.status_code == 200:
+#             return response.json()
+#         else:
+#             raise HTTPException(status_code=response.status_code, detail="Gagal mengambil data Objek Wisata")
+
+# # Schema Model untuk data Objek Wisata
+# class Wisata(BaseModel):
+#     id_wisata: str
+#     nama_objek: str
+
+# # Endpoint untuk mendapatkan data objek wisata
+# @app.get('/wisata', response_model=List[Wisata])
+# async def get_wisata():
+#     data_wisata = await get_data_wisata_from_web()
+#     return data_wisata
+
+# # Fungsi untuk mendapatkan indeks objek wisata berdasarkan id_wisata
+# async def get_wisata_index(id_wisata: str):
+#     data_wisata = await get_data_wisata_from_web()
+#     for index, wisata in enumerate(data_wisata):
+#         if wisata['id_wisata'] == id_wisata:
+#             return index
+#     return None
+
+# # Endpoint untuk mengambil detail data objek wisata sesuai dengan input id_wisata
+# @app.get("/wisata/{id_wisata}", response_model=Optional[Wisata])
+# async def get_wisata_by_id(id_wisata: str):
+#     data_wisata = await get_data_wisata_from_web()
+#     for wisata in data_wisata:
+#         if wisata['id_wisata'] == id_wisata:
+#             return Wisata(**wisata)
+#     return None
 
 # untuk penduduk
 
@@ -244,6 +344,91 @@ def get_pendudukhotel_by_nik(nik: int):
 
 #====================================================================================== (Selesai)
 
+
+# ================================================================================== (ASURANSI)
+
+class Pendudukasuransi (BaseModel):
+    nik: int
+    nama: str
+    provinsi: str
+    kota: str
+    kecamatan: str
+    desa : str
+
+data_Pendudukasuransi =[
+    {'nik':116, 'nama':'Ali', 'provinsi': 'Banten', 'kota': 'Tangerang Selatan', 'kecamatan': 'Ciputat Timur', 'desa': 'Bintaro Sektor 3A'},
+    {'nik':117, 'nama':'Sandra', 'provinsi': 'Jawa Barat', 'kota': 'Bandung', 'kecamatan': 'Sumur Bandung', 'desa': 'Karanganyar'},
+    {'nik':118, 'nama':'Joseph', 'provinsi': 'Jawa Tengah', 'kota': 'Magelang', 'kecamatan': 'Magelang Utara', 'desa': 'Wates'},
+    {'nik':119, 'nama':'Lisa', 'provinsi': 'DI Yogyakarta', 'kota': 'Yogyakarta', 'kecamatan': 'Kota Gede', 'desa': 'Purbayan'},
+    {'nik':120, 'nama':'Bagus', 'provinsi': 'DKI Jakarta', 'kota': 'Jakarta Barat', 'kecamatan': 'Taman Sari', 'desa': 'Maphar'},
+]
+    # untuk post data kita ke kelompok asuransi
+@app.post('/pendudukasuransi', response_model=Pendudukasuransi)
+async def post_pendudukasuransi(pendudukasuransi: Pendudukasuransi):
+    data_Pendudukasuransi.append(pendudukasuransi.dict())
+    return pendudukasuransi
+
+# untuk menampilkan data kita sendiri kelompok asuransi
+@app.get('/pendudukasuransi', response_model=List[Pendudukasuransi])
+async def get_pendudukasuransi():
+    return data_Pendudukasuransi
+
+def get_pendudukasuransi_index(nik: str) -> Optional[int]:
+    for index, pendudukasuransi in enumerate(data_Pendudukasuransi):
+        if pendudukasuransi['nik'] == nik:
+            return index
+    return None
+
+@app.get("/pendudukasuransi/{nik}", response_model=Pendudukasuransi)
+def get_pendudukasuransi_by_nik(nik: int):
+    index = get_pendudukasuransi_index(nik)
+    if index is not None:
+        return Pendudukasuransi(**data_Pendudukasuransi[index])
+    raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
+
+# =========================================== (BATAS PENDUDUK ASURANSI)
+
+# ================================================================================== (BANK)
+
+class Pendudukbank (BaseModel):
+    nik: int
+    nama: str
+
+
+data_Pendudukbank =[
+    {'nik':106, 'nama':'Ammar'},
+    {'nik':107, 'nama':'Alif'},
+    {'nik':108, 'nama':'Malvin'},
+    {'nik':109, 'nama':'Agung'},
+    {'nik':110, 'nama':'Fadlan'},
+
+]
+    # untuk post data kita ke kelompok asuransi
+@app.post('/pendudukbank', response_model=Pendudukbank)
+async def post_pendudukbank(pendudukbank: Pendudukbank):
+    data_Pendudukbank.append(pendudukbank.dict())
+    return pendudukbank
+
+# untuk menampilkan data kita sendiri kelompok hotel
+@app.get('/pendudukbank', response_model=List[Pendudukbank])
+async def get_pendudukbank():
+    return data_Pendudukbank
+
+def get_pendudukbank_index(nik: str) -> Optional[int]:
+    for index, pendudukbank in enumerate(data_Pendudukbank):
+        if pendudukbank['nik'] == nik:
+            return index
+    return None
+
+@app.get("/pendudukbank/{nik}", response_model=Pendudukbank)
+def get_pendudukbank_by_nik(nik: int):
+    index = get_pendudukbank_index(nik)
+    if index is not None:
+        return Pendudukbank(**data_Pendudukbank[index])
+    raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
+
+# =========================================== (BATAS PENDUDUK BANK)
+
 # untuk get data sendiri (berdasakan index)
 def get_penduduk_index(nik):
     for index, penduduk in enumerate(data_penduduk):
@@ -279,18 +464,11 @@ def delete_penduduk_by_id(nik: int):
     else:
         raise HTTPException(status_code=404, detail="Data Penduduk Tidak Berhasil Dihapus.")
     
-# untuk get data dari kelompok asuransi menggunakan url web hosting
-async def get_penduduk_from_web():
-    url = "path url"  #endpoint kelompok asuransi
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
+
 
 # untuk get data dari kelompok asuransi menggunakan url web hosting
 async def get_asuransi_from_web():
-    url = "path url"  #endpoint kelompok asuransi
+    url = "https://eai-fastapi.onrender.com/penduduk"  #endpoint kelompok asuransi
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
@@ -299,7 +477,7 @@ async def get_asuransi_from_web():
 
 # untuk get data dari kelompok bank menggunakan url web hosting (bank)
 async def get_bank_from_web():
-    url = "path url"  #endpoint kelompok bank
+    url = "https://jumantaradev.my.id/"  #endpoint kelompok bank
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
@@ -336,6 +514,10 @@ async def get_guide_from_web():
 class Asuransi(BaseModel):
     nik: int
     nama: str
+    provinsi: str
+    kota: str
+    kecamatan: str
+    desa : str
 
 class Bank(BaseModel):
     nik: int
@@ -394,7 +576,7 @@ class Setoran(BaseModel):
     status_setoran: str
     denda: float
     besar_pajak_setelah_denda: int
-    
+  
 # Data dummy untuk tabel pajak_objek_wisata
 data_setoran = [
     {'id_setoran': 1, 'id_pajak': 'PJ001', 'tanggal_jatuh_tempo': '30-11-2023', 'tanggal_setoran': '30-11-2023', 'status_setoran': 'tepat waktu', 'denda': 0, 'besar_pajak_setelah_denda': 0},
@@ -452,80 +634,106 @@ def get_setoran_by_status(status_setoran: str):
 #     else:
 #         setoran['denda'] = 0
 
-
-
-# # menyatukan data pajak dan wisata ke dalam satu tabel
-# async def combine_pajak_wisata():
-#     pajak_data = get_pajak()
-#     wisata_data = get_wisata()
-
-#     combined_data = []
-#     for pajak in pajak_data:
-#         for wisata in wisata_data:
-#             combined_obj = {
-#                 "id_pajak": pajak['id_pajak'],
-#                 "wisata": wisata
-#             }
-#             combined_data.append(combined_obj)
-#     return combined_data  
-
-# class PajakWisata(BaseModel):
-#     id_pajak: str
-#     wisata : Wisata
-
-# @app.get("/pajakwisata", response_model=List[PajakWisata])
-# def get_combined_data():
-#     combined_data = combine_pajak_wisata()
-#     return combined_data
-# Schema model untuk data gabungan
-
+#============================ COMBINED DATA PAJAK DAN OBJEK WISATA ==============================
 
 class Pajakwisata(BaseModel):
     id_pajak: str
+    id_wisata : str
+    nama_objek : str
     status_kepemilikan: str
     jenis_pajak: str
     tarif_pajak: float
     besar_pajak: int
-    id_wisata : str
-    nama_objek : str
-    nama_daerah : str
-    kategori : str
-    alamat : str
-    kontak : int
-    harga_tiket : int
 
-@app.get('/pajakwisata', response_model=List[Pajakwisata])
-async def get_pajakwisata():
-    try:
-        # Debugging: Print data yang diambil dari endpoint eksternal
-        data_wisata = await get_data_wisata_from_web()
-        
-        # Debugging: Print data yang diambil dari endpoint eksternal
-        print("Data Wisata dari Web:", data_wisata)
-        
-        # Konversi data pajak dan wisata ke DataFrame pandas
-        df_pajak = pd.DataFrame(data_pajak)
-        df_wisata = pd.DataFrame(data_wisata)
-        
-        # Debugging: Print data yang diambil dari dataset lokal
-        print("Data Pajak Lokal:", df_pajak)
-        
-        # Pastikan kolom yang diperlukan ada di kedua data
-        if 'id_pajak' not in df_pajak.columns:
-            raise ValueError("Kolom 'id_pajak' tidak ditemukan pada data pajak lokal")
-        if 'id_wisata' not in df_wisata.columns:
-            raise ValueError("Kolom 'id_wisata' tidak ditemukan pada data wisata eksternal")
-        
-        # Lakukan join (disini asumsikan join berdasarkan beberapa aturan logika, bisa disesuaikan)
-        df_pajakwisata = pd.merge(df_pajak, df_wisata, left_on='id_pajak', right_on='id_wisata')
+class PajakwisataResponse(BaseModel):
+    status: bool
+    message: str
+    data: Any
 
-        # Debugging: Print data setelah join
-        print("Data Gabungan:", df_pajakwisata)
+@app.get('/pajakwisata', response_model=PajakwisataResponse)
+async def get_pajak_wisata():
+    data_wisata = await get_data_wisata_from_web()
 
-        # Konversi hasil join ke list of dict
-        data_pajakwisata = df_pajakwisata.to_dict(orient='records')
+    # Menggunakan zip_longest untuk menggabungkan data pajak dan data wisata
+    gabungan_data = []
+    for pajak, wisata in zip_longest(data_pajak, data_wisata, fillvalue={}):
+        gabungan_data.append(Pajakwisata(
+            id_pajak=pajak.get('id_pajak', None),
+            id_wisata=wisata.get('id_wisata', None),
+            nama_objek=wisata.get('nama_objek', None),
+            status_kepemilikan=pajak.get('status_kepemilikan', None),
+            jenis_pajak=pajak.get('jenis_pajak', None),
+            tarif_pajak=pajak.get('tarif_pajak', None),
+            besar_pajak=pajak.get('besar_pajak', None)
+        ))
 
-        return data_pajakwisata
-    
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return PajakwisataResponse(
+        status=True,
+        message='Data berhasil diambil',
+        data=gabungan_data
+    )
+
+# Endpoint untuk mendapatkan data pajak objek wisata berdasarkan id_pajak
+@app.get('/pajakwisata/{id_pajak}', response_model=PajakwisataResponse)
+async def get_pajak_wisata_by_id(id_pajak: str):
+    data_wisata = await get_data_wisata_from_web()
+    for pajak in data_pajak:
+        if pajak['id_pajak'] == id_pajak:
+            for wisata in data_wisata:
+                if wisata['id_wisata'] == pajak['id_pajak']:  # Periksa pencocokan id_wisata dengan id_pajak
+                    gabungan_data = Pajakwisata(
+                        id_pajak=pajak['id_pajak'],
+                        id_wisata=wisata['id_wisata'],
+                        nama_objek=wisata['nama_objek'],
+                        status_kepemilikan=pajak['status_kepemilikan'],
+                        jenis_pajak=pajak['jenis_pajak'],
+                        tarif_pajak=pajak['tarif_pajak'],
+                        besar_pajak=pajak['besar_pajak']
+                    )
+                    return PajakwisataResponse(
+                        status=True,
+                        message='Data berhasil diambil',
+                        data=gabungan_data
+                    )
+    return PajakwisataResponse(
+        status=False,
+        message='Data tidak ditemukan',
+        data=None
+    )
+
+# Endpoint untuk menambahkan data gabungan pajak dan objek wisata
+@app.post('/pajakwisata', response_model=PajakwisataResponse)
+async def create_pajak_wisata(pajakwisata: Pajakwisata):
+    data_wisata = await get_data_wisata_from_web()
+    # Tambahkan data ke list data_pajak dan data_wisata
+    data_pajak.append(pajakwisata.dict())
+    data_wisata.append(pajakwisata.dict())
+    return PajakwisataResponse(
+        status=True, 
+        message="Data Pajak Objek Wisata berhasil ditambahkan",
+        data=pajakwisata
+    )
+
+# Endpoint untuk update isi data gabungan pajak dan objek wisata
+@app.put('/pajakwisata/{id_pajak}', response_model=PajakwisataResponse)
+async def update_pajak_wisata(id_pajak: str, pajakwisata: Pajakwisata):
+    data_wisata = await get_data_wisata_from_web()
+    # Cari data pajak dan wisata berdasarkan id_pajak
+    for i, pajak in enumerate(data_pajak):
+        if pajak['id_pajak'] == id_pajak:
+            data_pajak[i] = pajakwisata.dict()
+            break
+    for i, wisata in enumerate(data_wisata):
+        if wisata['id_wisata'] == pajakwisata.id_wisata:
+            data_wisata[i] = pajakwisata.dict()
+            break
+    return PajakwisataResponse(status=True, message="Data berhasil diupdate", data=pajakwisata)
+
+# Endpoint untuk menghapus data gabungan pajak dan objek wisata
+@app.delete('/pajakwisata/{id_pajak}', response_model=PajakwisataResponse)
+async def delete_pajak_wisata(id_pajak: str):
+    data_wisata = await get_data_wisata_from_web()
+    # Hapus data pajak dan wisata berdasarkan id_pajak
+    data_pajak[:] = [pajak for pajak in data_pajak if pajak['id_pajak']!= id_pajak]
+    data_wisata[:] = [wisata for wisata in data_wisata if wisata['id_wisata']!= id_pajak]
+    return PajakwisataResponse(status=True, message="Data berhasil dihapus", data=None)
