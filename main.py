@@ -280,13 +280,12 @@ class Pendudukbank (BaseModel):
     nama: str
 
 
-
 data_Pendudukbank =[
-    {'nik':106, 'nama':'Ammar', 'provinsi': 'Banten', 'kota': 'Tangeran Selatan', 'kecamatan': 'Serpong', 'desa': 'Rawa Buntu'},
-    {'nik':107, 'nama':'Alif', 'provinsi': 'Sumatera Barat', 'kota': 'Padang', 'kecamatan': 'Kuranji', 'desa': 'Ampang'},
-    {'nik':108, 'nama':'Malvin', 'provinsi': 'Jawa Barat', 'kota': 'Bogor', 'kecamatan': 'Bogor Selatan', 'desa': 'Cikaret'},
-    {'nik':109, 'nama':'Agung', 'provinsi': 'Jawa Timur', 'kota': 'Jember', 'kecamatan': 'Pakusari', 'desa': 'Kertosari'},
-    {'nik':110, 'nama':'Fadlan', 'provinsi': 'Banten', 'kota': 'Serang', 'kecamatan': 'Taktakan', 'desa': 'Kalang Anyar'},
+    {'nik':106, 'nama':'Ammar'},
+    {'nik':107, 'nama':'Alif'},
+    {'nik':108, 'nama':'Malvin'},
+    {'nik':109, 'nama':'Agung'},
+    {'nik':110, 'nama':'Fadlan'},
 
 ]
     # untuk post data kita ke kelompok asuransi
@@ -350,18 +349,11 @@ def delete_penduduk_by_id(nik: int):
     else:
         raise HTTPException(status_code=404, detail="Data Penduduk Tidak Berhasil Dihapus.")
     
-# untuk get data dari kelompok asuransi menggunakan url web hosting
-async def get_penduduk_from_web():
-    url = "path url"  #endpoint kelompok asuransi
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
+
 
 # untuk get data dari kelompok asuransi menggunakan url web hosting
 async def get_asuransi_from_web():
-    url = "https://eai-fastapi.onrender.com/"  #endpoint kelompok asuransi
+    url = "https://eai-fastapi.onrender.com/penduduk"  #endpoint kelompok asuransi
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
