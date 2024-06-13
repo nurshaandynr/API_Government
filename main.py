@@ -3,7 +3,6 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
 import httpx
-import pandas as pd
 from itertools import zip_longest
 
 
@@ -516,78 +515,16 @@ def get_setoran_by_status(status_setoran: str):
 #     else:
 #         setoran['denda'] = 0
 
-
-
-# # menyatukan data pajak dan wisata ke dalam satu tabel
-# async def combine_pajak_wisata():
-#     pajak_data = get_pajak()
-#     wisata_data = get_wisata()
-
-#     combined_data = []
-#     for pajak in pajak_data:
-#         for wisata in wisata_data:
-#             combined_obj = {
-#                 "id_pajak": pajak['id_pajak'],
-#                 "wisata": wisata
-#             }
-#             combined_data.append(combined_obj)
-#     return combined_data  
-
-# class PajakWisata(BaseModel):
-#     id_pajak: str
-#     wisata : Wisata
-
-# @app.get("/pajakwisata", response_model=List[PajakWisata])
-# def get_combined_data():
-#     combined_data = combine_pajak_wisata()
-#     return combined_data
-# Schema model untuk data gabungan
-
+#============================ COMBINED DARA ==============================
 
 class Pajakwisata(BaseModel):
     id_pajak: str
+    id_wisata : str
+    nama_objek : str
     status_kepemilikan: str
     jenis_pajak: str
     tarif_pajak: float
     besar_pajak: int
-    id_wisata : str
-    nama_objek : str
-
-# @app.get('/pajakwisata', response_model=List[Pajakwisata])
-# async def get_pajakwisata():
-#     try:
-#         # Debugging: Print data yang diambil dari endpoint eksternal
-#         data_wisata = await get_data_wisata_from_web()
-        
-#         # Debugging: Print data yang diambil dari endpoint eksternal
-#         print("Data Wisata dari Web:", data_wisata)
-        
-#         # Konversi data pajak dan wisata ke DataFrame pandas
-#         df_pajak = pd.DataFrame(data_pajak)
-#         df_wisata = pd.DataFrame(data_wisata)
-        
-#         # Debugging: Print data yang diambil dari dataset lokal
-#         print("Data Pajak Lokal:", df_pajak)
-        
-#         # Pastikan kolom yang diperlukan ada di kedua data
-#         if 'id_pajak' not in df_pajak.columns:
-#             raise ValueError("Kolom 'id_pajak' tidak ditemukan pada data pajak lokal")
-#         if 'id_wisata' not in df_wisata.columns:
-#             raise ValueError("Kolom 'id_wisata' tidak ditemukan pada data wisata eksternal")
-        
-#         # Lakukan join (disini asumsikan join berdasarkan beberapa aturan logika, bisa disesuaikan)
-#         df_pajakwisata = pd.merge(df_pajak, df_wisata, left_on='id_pajak', right_on='id_wisata')
-
-#         # Debugging: Print data setelah join
-#         print("Data Gabungan:", df_pajakwisata)
-
-#         # Konversi hasil join ke list of dict
-#         data_pajakwisata = df_pajakwisata.to_dict(orient='records')
-
-#         return data_pajakwisata
-    
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
 
 # Endpoint untuk mendapatkan data gabungan pajak dan objek wisata
 @app.get('/pajakwisata', response_model=List[Pajakwisata])
@@ -599,12 +536,12 @@ async def get_pajak_wisata():
     for pajak, wisata in zip_longest(data_pajak, data_wisata, fillvalue={}):
         gabungan_data.append(Pajakwisata(
             id_pajak=pajak.get('id_pajak', None),
+            id_wisata=wisata.get('id_wisata', None),
+            nama_objek=wisata.get('nama_objek', None),
             status_kepemilikan=pajak.get('status_kepemilikan', None),
             jenis_pajak=pajak.get('jenis_pajak', None),
             tarif_pajak=pajak.get('tarif_pajak', None),
-            besar_pajak=pajak.get('besar_pajak', None),
-            id_wisata=wisata.get('id_wisata', None),
-            nama_objek=wisata.get('nama_objek', None)
+            besar_pajak=pajak.get('besar_pajak', None)
         ))
 
     return gabungan_data
