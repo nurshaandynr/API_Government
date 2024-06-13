@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
 import httpx
+import pandas as pd
 
 
 app = FastAPI(
@@ -16,7 +17,7 @@ app = FastAPI(
 async def read_root():
     return {'example': 'Kamu telah berhasil masuk ke API Government', "Data":"Successful"}
 
-# chema model untuk data pajak objek wisata
+# schema model untuk data pajak objek wisata
 class Pajak(BaseModel):
     id_pajak: str
     status_kepemilikan: str
@@ -109,8 +110,8 @@ async def get_wisata_index(id_wisata: str):
 
 # Endpoint untuk mengambil detail data objek wisata sesuai dengan input id_wisata
 @app.get("/wisata/{id_wisata}", response_model=Optional[Wisata])
-def get_wisata_by_id(id_wisata: str):
-    data_wisata = get_data_wisata_from_web()
+async def get_wisata_by_id(id_wisata: str):
+    data_wisata = await get_data_wisata_from_web()
     for wisata in data_wisata:
         if wisata['id_wisata'] == id_wisata:
             return Wisata(**wisata)
@@ -152,15 +153,81 @@ data_penduduk =[
     {'nik':119, 'nama':'Lisa', 'provinsi': 'DI Yogyakarta', 'kota': 'Yogyakarta', 'kecamatan': 'Kota Gede', 'desa': 'Purbayan'},
     {'nik':120, 'nama':'Bagus', 'provinsi': 'DKI Jakarta', 'kota': 'Jakarta Barat', 'kecamatan': 'Taman Sari', 'desa': 'Maphar'},
 ]
-# untuk post data kita ke kelompok lain
-@app.post('/penduduk')
+
+    # untuk post data kita ke kelompok lain
+@app.post('/penduduk', response_model=Penduduk)
 async def post_penduduk(penduduk: Penduduk):
     data_penduduk.append(penduduk.dict())
+    return penduduk
 
 # untuk menampilkan data kita sendiri
 @app.get('/penduduk', response_model=List[Penduduk])
 async def get_penduduk():
     return data_penduduk
+
+# ================================================================================== (RENTAL MOBIL)
+
+class Pendudukrental (BaseModel):
+    nik: int
+    nama: str
+    kota: str
+
+data_Pendudukrental =[
+    {'nik':101, 'nama':'Ale', 'kota': 'Bandung'},
+    {'nik':102, 'nama':'Leo', 'kota': 'Gianyar'},
+    {'nik':103, 'nama':'Lea',  'kota': 'Yogyakarta'},
+    {'nik':104, 'nama':'Satoru', 'kota': 'Surabaya'},
+    {'nik':105, 'nama':'Suguru','kota': 'Jakarta Selatan',},
+]
+    # untuk post data kita ke kelompok  rental mobil
+
+@app.post("/pendudukrental")
+def tambah_pendudukrental(pendudukrental: Pendudukrental):
+    data_Pendudukrental.append(pendudukrental.dict())
+    return {"message": "Data Penduduk berhasil ditambahkan."}
+
+# untuk menampilkan data kita sendiri kelompok rental mobil
+@app.get('/pendudukrental', response_model=List[Pendudukrental])
+async def get_pendudukrental():
+    return data_Pendudukrental
+
+def get_pendudukrental_index(nik: str) -> Optional[int]:
+    for index, pendudukrental in enumerate(data_Pendudukrental):
+        if pendudukrental['nik'] == nik:
+            return index
+    return None
+
+@app.get("/pendudukrental/{nik}", response_model=Pendudukrental)
+def get_pendudukrental_by_nik(nik: int):
+    index = get_pendudukrental_index(nik)
+    if index is not None:
+        return Pendudukrental(**data_Pendudukrental[index])
+    raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
+
+# ================================================================================== (HOTEL)
+
+class Pendudukhotel (BaseModel):
+    nik: int
+    nama: str
+    kota: str
+
+data_Pendudukhotel =[
+    {'nik':101, 'nama':'Ale', 'kota': 'Bandung'},
+    {'nik':102, 'nama':'Leo', 'kota': 'Gianyar'},
+    {'nik':103, 'nama':'Lea',  'kota': 'Yogyakarta'},
+    {'nik':104, 'nama':'Satoru', 'kota': 'Surabaya'},
+    {'nik':105, 'nama':'Suguru','kota': 'Jakarta Selatan',},
+]
+    # untuk post data kita ke kelompok hotel
+@app.post('/pendudukhotel', response_model=Pendudukhotel)
+async def post_pendudukhotel(pendudukhotel: Pendudukhotel):
+    data_Pendudukhotel.append(pendudukhotel.dict())
+    return pendudukhotel
+
+# untuk menampilkan data kita sendiri kelompok hotel
+@app.get('/pendudukhotel', response_model=List[Pendudukhotel])
+async def get_pendudukhotel():
+    return data_Pendudukhotel
 
 # untuk get data sendiri (berdasakan index)
 def get_penduduk_index(nik):
@@ -201,7 +268,7 @@ def delete_penduduk_by_id(nik: int):
 async def get_penduduk_from_web():
     url = "path url"  #endpoint kelompok asuransi
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
@@ -210,7 +277,7 @@ async def get_penduduk_from_web():
 async def get_asuransi_from_web():
     url = "path url"  #endpoint kelompok asuransi
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
@@ -219,25 +286,25 @@ async def get_asuransi_from_web():
 async def get_bank_from_web():
     url = "path url"  #endpoint kelompok bank
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
 
 # untuk get data dari kelompok hotel menggunakan url web hosting (hotel)
 async def get_hotel_from_web():
-    url = "path url"  #endpoint kelompok hotel
+    url = "https://hotelbaru.onrender.com"  #endpoint kelompok hotel
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
     
 # untuk get data dari kelompok bank menggunakan url web hosting (rental mobil)
 async def get_rental_from_web():
-    url = "path url"  #endpoint kelompok rental mobil
+    url = "https://rental-mobil-api.onrender.com/pelanggan"  #endpoint kelompok rental mobil
     response = requests.get(url)
-    if response.status.code == 200:
+    if response.status_code == 200:
         return response.json()
     else:
         raise HTTPException(status_code=response.status_code, detail = "Gagal mengambil Penduduk.")
@@ -265,9 +332,8 @@ class Hotel(BaseModel):
     kabupaten: str
 
 class Rental(BaseModel):
-    nik: int
-    nama: str
-    kabupaten: str
+    nomor_telepon:str
+    email:str
 
 class Guide(BaseModel):
     id_guider: str
@@ -292,10 +358,10 @@ async def get_hotel():
     return data_hotel
 
 # untuk mendapatkan hasil dari kelompok lain (rental mobil)
-@app.get('/penduduk/rental', response_model=List[Rental])
-async def get_rental():
-    data_rental = get_rental_from_web()
-    return data_rental
+@app.get('/pelanggan', response_model=List[Rental])
+async def get_pelanggan():
+    data_pelanggan = await get_rental_from_web()
+    return data_pelanggan
 
 # untuk mendapatkan hasil dari kelompok lain (Tour Guide)
 # untuk mendapatkan hasil dari kelompok lain (Tour Guide)
@@ -373,27 +439,78 @@ def get_setoran_by_status(status_setoran: str):
 
 
 
+# # menyatukan data pajak dan wisata ke dalam satu tabel
+# async def combine_pajak_wisata():
+#     pajak_data = get_pajak()
+#     wisata_data = get_wisata()
 
-# menyatukan data pajak dan wisata ke dalam satu tabel
-async def combine_pajak_wisata():
-    pajak_data = get_pajak()
-    wisata_data = get_wisata()
+#     combined_data = []
+#     for pajak in pajak_data:
+#         for wisata in wisata_data:
+#             combined_obj = {
+#                 "id_pajak": pajak['id_pajak'],
+#                 "wisata": wisata
+#             }
+#             combined_data.append(combined_obj)
+#     return combined_data  
 
-    combined_data = []
-    for pajak in pajak_data:
-        for wisata in wisata_data:
-            combined_obj = {
-                "id_pajak": pajak['id_pajak'],
-                "wisata": wisata
-            }
-            combined_data.append(combined_obj)
-    return combined_data  
+# class PajakWisata(BaseModel):
+#     id_pajak: str
+#     wisata : Wisata
 
-class PajakWisata(BaseModel):
+# @app.get("/pajakwisata", response_model=List[PajakWisata])
+# def get_combined_data():
+#     combined_data = combine_pajak_wisata()
+#     return combined_data
+# Schema model untuk data gabungan
+
+
+class Pajakwisata(BaseModel):
     id_pajak: str
-    wisata : Wisata
+    status_kepemilikan: str
+    jenis_pajak: str
+    tarif_pajak: float
+    besar_pajak: int
+    id_wisata : str
+    nama_objek : str
+    nama_daerah : str
+    kategori : str
+    alamat : str
+    kontak : int
+    harga_tiket : int
 
-@app.get("/pajakwisata", response_model=List[PajakWisata])
-def get_combined_data():
-    combined_data = combine_pajak_wisata()
-    return combined_data
+@app.get('/pajakwisata', response_model=List[Pajakwisata])
+async def get_pajakwisata():
+    try:
+        # Debugging: Print data yang diambil dari endpoint eksternal
+        data_wisata = await get_data_wisata_from_web()
+        
+        # Debugging: Print data yang diambil dari endpoint eksternal
+        print("Data Wisata dari Web:", data_wisata)
+        
+        # Konversi data pajak dan wisata ke DataFrame pandas
+        df_pajak = pd.DataFrame(data_pajak)
+        df_wisata = pd.DataFrame(data_wisata)
+        
+        # Debugging: Print data yang diambil dari dataset lokal
+        print("Data Pajak Lokal:", df_pajak)
+        
+        # Pastikan kolom yang diperlukan ada di kedua data
+        if 'id_pajak' not in df_pajak.columns:
+            raise ValueError("Kolom 'id_pajak' tidak ditemukan pada data pajak lokal")
+        if 'id_wisata' not in df_wisata.columns:
+            raise ValueError("Kolom 'id_wisata' tidak ditemukan pada data wisata eksternal")
+        
+        # Lakukan join (disini asumsikan join berdasarkan beberapa aturan logika, bisa disesuaikan)
+        df_pajakwisata = pd.merge(df_pajak, df_wisata, left_on='id_pajak', right_on='id_wisata')
+
+        # Debugging: Print data setelah join
+        print("Data Gabungan:", df_pajakwisata)
+
+        # Konversi hasil join ke list of dict
+        data_pajakwisata = df_pajakwisata.to_dict(orient='records')
+
+        return data_pajakwisata
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
