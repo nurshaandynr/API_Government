@@ -8,7 +8,7 @@ from itertools import zip_longest
 
 app = FastAPI(
     title="Government API Documentation",
-    description="API untuk mengelola data-data pemerintahan",
+    description="API untuk mengelola data pemerintahan",
     docs_url="/",  # Ubah docs_url menjadi "/"
 )
 
