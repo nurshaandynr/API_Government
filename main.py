@@ -111,12 +111,12 @@ class Wisata(BaseModel):
 @app.get('/wisata', response_model=ApiResponse)
 async def get_wisata():
     data_wisata = await get_data_wisata_from_web()
-    return ApiResponse(status=True, message="Data Objek Wisata Berhasil Diambil", data=data_wisata['data'])
+    return ApiResponse(status=True, message="Data Objek Wisata Berhasil Diambil", data=data_wisata)
 
 # Fungsi untuk mendapatkan indeks objek wisata berdasarkan id_wisata
 async def get_wisata_index(id_wisata: str):
     data_wisata = await get_data_wisata_from_web()
-    for index, wisata in enumerate(data_wisata['data']):
+    for index, wisata in enumerate(data_wisata):
         if wisata['id_wisata'] == id_wisata:
             return index
     return None
