@@ -235,6 +235,7 @@ async def get_pendudukhotel():
 class Pendudukasuransi (BaseModel):
     nik: int
     nama: str
+    provinsi: str
     kota: str
     kecamatan: str
     desa : str
@@ -277,7 +278,7 @@ def get_pendudukasuransi_by_nik(nik: int):
 class Pendudukbank (BaseModel):
     nik: int
     nama: str
-    kota: str
+
 
 
 data_Pendudukbank =[
