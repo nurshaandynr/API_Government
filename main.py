@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
 import httpx
-import pandas as pd
+
 
 
 app = FastAPI(
@@ -218,16 +218,31 @@ data_Pendudukhotel =[
     {'nik':104, 'nama':'Satoru', 'kota': 'Surabaya'},
     {'nik':105, 'nama':'Suguru','kota': 'Jakarta Selatan',},
 ]
-    # untuk post data kita ke kelompok hotel
-@app.post('/pendudukhotel', response_model=Pendudukhotel)
-async def post_pendudukhotel(pendudukhotel: Pendudukhotel):
+
+@app.post("/pendudukhotel")
+def tambah_pendudukhotel(pendudukhotel: Pendudukhotel):
     data_Pendudukhotel.append(pendudukhotel.dict())
-    return pendudukhotel
+    return {"message": "Data Penduduk berhasil ditambahkan."}
 
 # untuk menampilkan data kita sendiri kelompok hotel
 @app.get('/pendudukhotel', response_model=List[Pendudukhotel])
 async def get_pendudukhotel():
-    return data_Pendudukhotel
+    return data_Pendudukrental
+
+def get_pendudukhotel_index(nik: int) -> Optional[int]:
+    for index, pendudukhotel in enumerate(data_Pendudukhotel):
+        if pendudukhotel['nik'] == nik:
+            return index
+    return None
+
+@app.get("/pendudukhotel/{nik}", response_model=Pendudukhotel)
+def get_pendudukhotel_by_nik(nik: int):
+    index = get_pendudukhotel_index(nik)
+    if index is not None:
+        return Pendudukhotel(**data_Pendudukhotel[index])
+    raise HTTPException(status_code=404, detail="Data Penduduk tidak ditemukan.")
+
+#====================================================================================== (Selesai)
 
 # untuk get data sendiri (berdasakan index)
 def get_penduduk_index(nik):
