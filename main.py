@@ -1,6 +1,7 @@
 from typing import Any, List, Optional, Union
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from itertools import zip_longest
 import requests
 import httpx
 
